@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Third Grain | Better life with upcycle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Quicksand:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- グレインテクスチャ(全ページ共通オーバーレイ) -->
+<svg class="grain-defs" width="0" height="0">
+  <filter id="grainFilter">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="noise"/>
+    <feColorMatrix in="noise" type="matrix"
+      values="0 0 0 0 0
+              0 0 0 0 0
+              0 0 0 0 0
+              0 0 0 0.5 0"/>
+  </filter>
+</svg>
+<div class="grain-overlay"></div>
+
+<!-- ナビゲーション -->
+<header class="site-nav" id="siteNav">
+  <div class="nav-inner">
+    <a class="nav-mark" href="#top">
+      <span class="nav-mark-main">Third Grain</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#concept">Concept</a>
+      <a href="#products">Products</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="メニュー">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ヒーロー:ロゴを最初に印象的に -->
+<section class="hero" id="top">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <p class="hero-tagline reveal-item" data-delay="0">Better life with upcycle</p>
+    <h1 class="hero-logo reveal-item" data-delay="1">
+      <span class="logo-word">Third</span><span class="logo-word">Grain</span>
+    </h1>
+    <p class="hero-sub reveal-item" data-delay="2">一粒の素材に、もう一度物語を。<br class="sp-only">アップサイクルで紡ぐ、暮らしの新しいかたち。</p>
+  </div>
+  <a href="#concept" class="scroll-cue" aria-label="スクロールして続きを見る">
+    <span class="scroll-cue-line"></span>
+    <span class="scroll-cue-text">SCROLL</span>
+  </a>
+</section>
+
+<main>
+
+  <!-- コンセプト -->
+  <section class="section concept" id="concept">
+    <div class="section-inner">
+      <p class="eyebrow reveal-on-scroll">01 — Concept</p>
+      <h2 class="section-title reveal-on-scroll">捨てられるはずだったものに、<br>もう一度、光を。</h2>
+      <p class="section-text reveal-on-scroll">
+        （※本文はダミーです。あとで差し替えてください）<br>
+        Third Grainは、廃棄されるはずだった生地や木材、金属などの端材に新しい価値を吹き込み、
+        ひとつひとつ手作業で仕立て直すアップサイクルブランドです。同じものは二つとない、
+        一点物の温もりを日々の暮らしに。
+      </p>
+      <div class="concept-grid">
+        <div class="concept-card reveal-on-scroll">
+          <span class="concept-num">01</span>
+          <h3>Sustainable</h3>
+          <p>環境に配慮した素材選びとものづくり。（ダミーテキスト）</p>
+        </div>
+        <div class="concept-card reveal-on-scroll">
+          <span class="concept-num">02</span>
+          <h3>Handmade</h3>
+          <p>職人の手仕事による、丁寧な一点仕立て。（ダミーテキスト）</p>
+        </div>
+        <div class="concept-card reveal-on-scroll">
+          <span class="concept-num">03</span>
+          <h3>One & Only</h3>
+          <p>世界にひとつだけの、あなたのための一品。（ダミーテキスト）</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- プロダクト -->
+  <section class="section products" id="products">
+    <div class="section-inner">
+      <p class="eyebrow reveal-on-scroll">02 — Products</p>
+      <h2 class="section-title reveal-on-scroll">Featured Items</h2>
+      <p class="section-text reveal-on-scroll">（※商品情報はダミーです。あとで差し替えてください）</p>
+
+      <div class="product-grid">
+        <article class="product-card reveal-on-scroll">
+          <div class="product-thumb thumb-a"></div>
+          <h3>アップサイクルトート</h3>
+          <p class="product-price">¥8,800</p>
+        </article>
+        <article class="product-card reveal-on-scroll">
+          <div class="product-thumb thumb-b"></div>
+          <h3>リメイクデニムエプロン</h3>
+          <p class="product-price">¥6,600</p>
+        </article>
+        <article class="product-card reveal-on-scroll">
+          <div class="product-thumb thumb-c"></div>
+          <h3>端材ウッドトレイ</h3>
+          <p class="product-price">¥4,400</p>
+        </article>
+        <article class="product-card reveal-on-scroll">
+          <div class="product-thumb thumb-d"></div>
+          <h3>リネンパッチワークポーチ</h3>
+          <p class="product-price">¥3,300</p>
+        </article>
+      </div>
+
+      <a href="#" class="btn-outline reveal-on-scroll">View All Products</a>
+    </div>
+  </section>
+
+  <!-- ギャラリー -->
+  <section class="section gallery" id="gallery">
+    <div class="section-inner">
+      <p class="eyebrow reveal-on-scroll light">03 — Gallery</p>
+      <h2 class="section-title light reveal-on-scroll">Our Story in Grain</h2>
+    </div>
+    <div class="gallery-strip">
+      <div class="gallery-item g1 reveal-on-scroll"></div>
+      <div class="gallery-item g2 reveal-on-scroll"></div>
+      <div class="gallery-item g3 reveal-on-scroll"></div>
+      <div class="gallery-item g4 reveal-on-scroll"></div>
+      <div class="gallery-item g5 reveal-on-scroll"></div>
+    </div>
+  </section>
+
+  <!-- コンタクト -->
+  <section class="section contact" id="contact">
+    <div class="section-inner narrow">
+      <p class="eyebrow reveal-on-scroll">04 — Contact</p>
+      <h2 class="section-title reveal-on-scroll">Get in Touch</h2>
+      <p class="section-text reveal-on-scroll">
+        （※連絡先はダミーです。あとで差し替えてください）<br>
+        ご質問・オーダーメイドのご相談などお気軽にどうぞ。
+      </p>
+      <div class="contact-info reveal-on-scroll">
+        <p>〒000-0000 東京都◯◯区◯◯ 1-2-3</p>
+        <p>Tel. 000-0000-0000 ／ Open 11:00–19:00（水休）</p>
+        <p>info@thirdgrain.example.com</p>
+      </div>
+      <div class="sns-row reveal-on-scroll">
+        <a href="#" aria-label="Instagram">Instagram</a>
+        <a href="#" aria-label="X">X</a>
+        <a href="#" aria-label="note">note</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <span class="footer-logo">Third Grain</span>
+  <p>&copy; 2026 Third Grain. All rights reserved. (仮フッター)</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
