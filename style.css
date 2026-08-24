@@ -83,11 +83,9 @@ a { color: inherit; text-decoration: none; }
   justify-content: space-between;
 }
 .nav-mark-main {
-  font-family: var(--font-logo);
-  font-weight: 600;
-  font-size: 1.15rem;
-  letter-spacing: 0.02em;
-  color: var(--espresso);
+  display: block;
+  height: 22px;
+  width: auto;
   opacity: 0;
   transform: translateY(-6px);
   transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
@@ -144,28 +142,18 @@ a { color: inherit; text-decoration: none; }
   padding: 0 24px;
 }
 .hero-tagline {
-  font-family: var(--font-tag);
-  font-weight: 500;
-  font-size: clamp(0.95rem, 2vw, 1.3rem);
-  letter-spacing: 0.06em;
-  color: var(--wheat-soft);
-  margin: 0 0 18px;
+  display: block;
+  margin: 0 auto 22px;
+  height: clamp(16px, 2.6vw, 26px);
+  width: auto;
 }
 .hero-logo {
-  margin: 0;
-  font-family: var(--font-logo);
-  font-weight: 700;
-  color: var(--cream);
-  font-size: clamp(3.2rem, 12vw, 8.5rem);
-  line-height: 0.98;
-  letter-spacing: -0.01em;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0 0.32em;
+  display: block;
+  margin: 0 auto;
+  height: clamp(64px, 15vw, 168px);
+  width: auto;
+  max-width: 90vw;
 }
-.logo-word:first-child { color: var(--cream); }
-.logo-word:last-child { color: var(--wheat-soft); }
 
 .hero-sub {
   margin: 28px 0 0;
@@ -392,12 +380,9 @@ a { color: inherit; text-decoration: none; }
 }
 .footer-logo {
   display: block;
-  font-family: var(--font-logo);
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: var(--cream);
-  margin-bottom: 10px;
-  letter-spacing: 0.02em;
+  height: 24px;
+  width: auto;
+  margin: 0 auto 14px;
 }
 .site-footer p { margin: 0; font-size: 0.75rem; letter-spacing: 0.04em; }
 
