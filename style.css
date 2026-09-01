@@ -92,6 +92,12 @@ a { color: inherit; text-decoration: none; }
 }
 .site-nav.scrolled .nav-mark-main { opacity: 1; transform: translateY(0); }
 
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: clamp(24px, 3.5vw, 44px);
+}
+
 .nav-links {
   display: flex;
   gap: clamp(20px, 3vw, 40px);
@@ -100,10 +106,12 @@ a { color: inherit; text-decoration: none; }
   font-size: 0.85rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--espresso);
+  color: var(--cream);
   position: relative;
   padding-bottom: 4px;
+  transition: color 0.4s var(--ease);
 }
+.site-nav.scrolled .nav-links a { color: var(--espresso); }
 .nav-links a::after {
   content: "";
   position: absolute;
@@ -114,6 +122,22 @@ a { color: inherit; text-decoration: none; }
   transition: width 0.3s var(--ease);
 }
 .nav-links a:hover::after { width: 100%; }
+
+.nav-cta {
+  flex: none;
+  padding: 9px 22px;
+  border-radius: 999px;
+  background: var(--wheat);
+  color: var(--espresso);
+  font-family: var(--font-tag);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background 0.3s var(--ease), transform 0.3s var(--ease);
+}
+.nav-cta:hover { background: var(--wheat-soft); transform: translateY(-1px); }
 
 .nav-toggle { display: none; }
 
