@@ -26,4 +26,13 @@
   } else {
     targets.forEach((el) => el.classList.add('is-visible'));
   }
+
+  // タップリストの自動横スクロール:中身を複製してシームレスにループさせる
+  const track = document.getElementById('marqueeTrack');
+  if (track) {
+    const items = Array.from(track.children);
+    items.forEach((item) => {
+      track.appendChild(item.cloneNode(true));
+    });
+  }
 })();
