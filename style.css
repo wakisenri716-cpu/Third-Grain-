@@ -148,7 +148,15 @@ a { color: inherit; text-decoration: none; }
 
 .nav-toggle { display: none; }
 
-/* ---------- ヒーロー ---------- */
+/* ---------- ヒーロー〜タップリスト(継ぎ目のない背景) ---------- */
+.dark-zone {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 30% 10%, rgba(171, 127, 78, 0.22), transparent 40%),
+    radial-gradient(ellipse at 75% 55%, rgba(109, 122, 85, 0.18), transparent 45%),
+    linear-gradient(160deg, #2a2420 0%, #211c19 100%);
+}
 .hero {
   position: relative;
   min-height: 100vh;
@@ -156,15 +164,6 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: var(--espresso);
-}
-.hero-bg {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse at 30% 20%, rgba(171, 127, 78, 0.25), transparent 55%),
-    radial-gradient(ellipse at 75% 80%, rgba(109, 122, 85, 0.22), transparent 55%),
-    linear-gradient(160deg, #2a2420 0%, #211c19 100%);
 }
 .hero-content {
   position: relative;
@@ -367,7 +366,7 @@ a { color: inherit; text-decoration: none; }
 .btn-outline:hover { background: var(--espresso); color: var(--cream); }
 
 /* ---------- タップリスト(自動横スクロール) ---------- */
-.gallery { background: var(--espresso); padding-bottom: clamp(60px, 8vw, 100px); overflow: hidden; }
+.gallery { padding-bottom: clamp(60px, 8vw, 100px); }
 .gallery .section-inner { text-align: center; margin-bottom: 44px; }
 
 .marquee {
