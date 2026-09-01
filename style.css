@@ -27,8 +27,8 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  background: var(--cream);
-  color: var(--ink);
+  background: var(--espresso);
+  color: var(--cream);
   font-family: var(--font-jp);
   line-height: 1.85;
   -webkit-font-smoothing: antialiased;
@@ -70,9 +70,9 @@ a { color: inherit; text-decoration: none; }
   transition: background 0.4s var(--ease), box-shadow 0.4s var(--ease), padding 0.4s var(--ease);
 }
 .site-nav.scrolled {
-  background: rgba(244, 239, 228, 0.85);
+  background: rgba(42, 36, 32, 0.85);
   backdrop-filter: blur(10px);
-  box-shadow: 0 1px 0 var(--line);
+  box-shadow: 0 1px 0 var(--line-inverse);
   padding: 14px clamp(20px, 5vw, 56px);
 }
 .nav-inner {
@@ -111,7 +111,6 @@ a { color: inherit; text-decoration: none; }
   padding-bottom: 4px;
   transition: color 0.4s var(--ease);
 }
-.site-nav.scrolled .nav-links a { color: var(--espresso); }
 .nav-links a::after {
   content: "";
   position: absolute;
@@ -155,7 +154,7 @@ a { color: inherit; text-decoration: none; }
   background:
     radial-gradient(ellipse at 30% 10%, rgba(171, 127, 78, 0.22), transparent 40%),
     radial-gradient(ellipse at 75% 55%, rgba(109, 122, 85, 0.18), transparent 45%),
-    linear-gradient(160deg, #2a2420 0%, #211c19 100%);
+    var(--espresso);
 }
 .hero {
   position: relative;
@@ -264,7 +263,7 @@ a { color: inherit; text-decoration: none; }
 
 .section-text {
   max-width: 640px;
-  color: var(--espresso-soft);
+  color: rgba(244, 239, 228, 0.72);
   font-size: 1rem;
 }
 .contact .section-text { margin: 0 auto 36px; }
@@ -286,14 +285,14 @@ a { color: inherit; text-decoration: none; }
 }
 .concept-card {
   padding: 32px 26px;
-  background: var(--cream-2);
-  border: 1px solid var(--line);
+  background: var(--espresso-soft);
+  border: 1px solid var(--line-inverse);
   border-radius: 4px;
   transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
 }
 .concept-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 18px 32px -20px rgba(42, 36, 32, 0.35);
+  box-shadow: 0 18px 32px -20px rgba(0, 0, 0, 0.5);
 }
 .concept-num {
   font-family: var(--font-logo);
@@ -309,11 +308,11 @@ a { color: inherit; text-decoration: none; }
 .concept-card p {
   margin: 0;
   font-size: 0.9rem;
-  color: var(--espresso-soft);
+  color: rgba(244, 239, 228, 0.68);
 }
 
 /* ---------- プロダクト ---------- */
-.products { background: var(--cream-2); }
+.products { background: var(--espresso-soft); }
 .product-grid {
   margin-top: 48px;
   display: grid;
@@ -355,7 +354,7 @@ a { color: inherit; text-decoration: none; }
   display: inline-block;
   margin-top: 48px;
   padding: 14px 36px;
-  border: 1px solid var(--espresso);
+  border: 1px solid var(--cream);
   border-radius: 999px;
   font-family: var(--font-tag);
   font-size: 0.85rem;
@@ -363,7 +362,7 @@ a { color: inherit; text-decoration: none; }
   text-transform: uppercase;
   transition: background 0.3s var(--ease), color 0.3s var(--ease);
 }
-.btn-outline:hover { background: var(--espresso); color: var(--cream); }
+.btn-outline:hover { background: var(--cream); color: var(--espresso); }
 
 /* ---------- タップリスト(自動横スクロール) ---------- */
 .gallery { padding-bottom: clamp(60px, 8vw, 100px); }
@@ -429,7 +428,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ---------- コンタクト ---------- */
-.contact-info { color: var(--espresso-soft); font-size: 0.9rem; margin-bottom: 30px; }
+.contact-info { color: rgba(244, 239, 228, 0.72); font-size: 0.9rem; margin-bottom: 30px; }
 .contact-info p { margin: 4px 0; }
 .sns-row { display: flex; gap: 26px; justify-content: center; }
 .sns-row a {
@@ -437,7 +436,7 @@ a { color: inherit; text-decoration: none; }
   font-size: 0.8rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--line-inverse);
   padding-bottom: 3px;
   transition: border-color 0.3s var(--ease), color 0.3s var(--ease);
 }
