@@ -16,7 +16,7 @@
   // 最新情報(News)を microCMS から読み込んで描画する。
   // お知らせを更新したいときは、microCMSの管理画面(ニュース)でコンテンツを追加・編集するだけでよい。
   const MICROCMS_SERVICE = 'thirdgrain';
-  const MICROCMS_ENDPOINT = 'ニュース'; // microCMS側で設定したエンドポイント名
+  const MICROCMS_ENDPOINT = 'news'; // microCMS管理画面のURL(/apis/news)で確認したエンドポイント名
   const MICROCMS_API_KEY = 'gK4E1t3mC15CN0FDIuvEdD8iqJtnXqv1Bbhk'; // GET専用キー
 
   const newsGrid = document.getElementById('newsGrid');
