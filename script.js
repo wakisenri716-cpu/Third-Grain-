@@ -14,9 +14,9 @@
   onScroll();
 
   // 最新情報(News)を microCMS から読み込んで描画する。
-  // お知らせを更新したいときは、microCMSの管理画面(news)でコンテンツを追加・編集するだけでよい。
+  // お知らせを更新したいときは、microCMSの管理画面(ニュース)でコンテンツを追加・編集するだけでよい。
   const MICROCMS_SERVICE = 'thirdgrain';
-  const MICROCMS_ENDPOINT = 'news';
+  const MICROCMS_ENDPOINT = 'ニュース'; // microCMS側で設定したエンドポイント名
   const MICROCMS_API_KEY = 'gK4E1t3mC15CN0FDIuvEdD8iqJtnXqv1Bbhk'; // GET専用キー
 
   const newsGrid = document.getElementById('newsGrid');
@@ -84,7 +84,7 @@
   });
 
   const loadNewsFromMicroCms = async () => {
-    const url = `https://${MICROCMS_SERVICE}.microcms.io/api/v1/${MICROCMS_ENDPOINT}?limit=9`;
+    const url = `https://${MICROCMS_SERVICE}.microcms.io/api/v1/${encodeURIComponent(MICROCMS_ENDPOINT)}?limit=9`;
     const res = await fetch(url, {
       headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY },
     });
