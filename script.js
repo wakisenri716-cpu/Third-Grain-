@@ -13,8 +13,12 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  // 最新情報(News)を data/news.json から読み込んで描画する。
-  // お知らせを更新したいときは、このスクリプトではなく data/news.json を編集する。
+  // 最新情報(News)を microCMS から読み込んで描画する。
+  // お知らせを更新したいときは、microCMSの管理画面(news)でコンテンツを追加・編集するだけでよい。
+  const MICROCMS_SERVICE = 'thirdgrain';
+  const MICROCMS_ENDPOINT = 'news';
+  const MICROCMS_API_KEY = 'gK4E1t3mC15CN0FDIuvEdD8iqJtnXqv1Bbhk'; // GET専用キー
+
   const newsGrid = document.getElementById('newsGrid');
   const fallbackNews = [
     {
@@ -51,28 +55,68 @@
   const renderNews = (items) => {
     if (!newsGrid) return;
     newsGrid.innerHTML = items
-      .map((item, i) => `
+      .map((item, i) => {
+        const thumb = item.thumbnailUrl
+          ? `<img src="${escapeHtml(item.thumbnailUrl)}" alt="">`
+          : '';
+        return `
         <article class="news-card reveal-on-scroll" style="--reveal-delay:${Math.min(i * 90, 360)}ms">
-          <div class="news-thumb thumb-${escapeHtml(item.thumb || 'a')}"></div>
+          <div class="news-thumb thumb-${escapeHtml(item.thumb || 'a')}">${thumb}</div>
           <p class="news-meta">${escapeHtml(item.date)}　・　${escapeHtml(item.tag)}</p>
           <h3>${escapeHtml(item.title)}</h3>
           <p class="news-excerpt">${escapeHtml(item.excerpt)}</p>
           <a href="${escapeHtml(item.link || '#')}" class="news-read">Read <span>→</span></a>
         </article>
-      `)
+      `;
+      })
       .join('');
   };
 
+  // microCMSのレスポンス(contents配列)をこのページが使う形に変換
+  const mapMicroCmsItem = (c) => ({
+    date: c.date || '',
+    tag: c.tag || '',
+    title: c.title || '',
+    excerpt: c.excerpt || '',
+    link: c.link || '#',
+    thumb: c.thumb || 'a',
+    thumbnailUrl: c.thumbnail && c.thumbnail.url ? c.thumbnail.url : null,
+  });
+
+  const loadNewsFromMicroCms = async () => {
+    const url = `https://${MICROCMS_SERVICE}.microcms.io/api/v1/${MICROCMS_ENDPOINT}?limit=9`;
+    const res = await fetch(url, {
+      headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY },
+    });
+    if (!res.ok) throw new Error(`microCMS fetch failed: ${res.status}`);
+    const data = await res.json();
+    const items = Array.isArray(data.contents) ? data.contents.map(mapMicroCmsItem) : [];
+    // date（例: 2026.08.20）の新しい順に並べ替え
+    items.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+    return items;
+  };
+
+  const loadNewsFromJsonFile = async () => {
+    const res = await fetch('data/news.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error(`news.json fetch failed: ${res.status}`);
+    const items = await res.json();
+    return Array.isArray(items) ? items : [];
+  };
+
   if (newsGrid) {
+    let items = [];
     try {
-      const res = await fetch('data/news.json', { cache: 'no-store' });
-      if (!res.ok) throw new Error(`news.json fetch failed: ${res.status}`);
-      const items = await res.json();
-      renderNews(Array.isArray(items) && items.length ? items : fallbackNews);
+      items = await loadNewsFromMicroCms();
     } catch (err) {
-      // file:// で開いた場合や取得失敗時は、埋め込みのダミーで表示を保つ
-      renderNews(fallbackNews);
+      try {
+        // microCMSに届かない場合(ネットワーク不通・設定前など)はローカルJSONを試す
+        items = await loadNewsFromJsonFile();
+      } catch (err2) {
+        // それも失敗したら埋め込みのダミーで表示を保つ
+        items = [];
+      }
     }
+    renderNews(items.length ? items : fallbackNews);
   }
 
   // グリッド/リスト内の要素は少しずつ時間差で現れるようにする(News は描画時に設定済み)

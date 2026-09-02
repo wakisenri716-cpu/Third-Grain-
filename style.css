@@ -318,6 +318,12 @@ a { color: inherit; text-decoration: none; }
   position: relative;
   overflow: hidden;
 }
+.news-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 .news-thumb::after {
   content: "";
   position: absolute; inset: 0;
