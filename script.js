@@ -52,6 +52,15 @@
       { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
     ));
 
+  // 記事の飛び先を決める: linkに実URLが入っていればそれを外部リンクとして優先し、
+  // 無ければ(microCMSのidがあれば)このサイト内の記事詳細ページへ飛ばす
+  const getArticleHref = (item) => {
+    const link = (item.link || '').trim();
+    if (link && link !== '-' && link !== '#') return { href: link, external: true };
+    if (item.id) return { href: `news-detail.html?id=${encodeURIComponent(item.id)}`, external: false };
+    return { href: '#', external: false };
+  };
+
   const renderNews = (items) => {
     if (!newsGrid) return;
     newsGrid.innerHTML = items
@@ -59,13 +68,16 @@
         const thumb = item.thumbnailUrl
           ? `<img src="${escapeHtml(item.thumbnailUrl)}" alt="">`
           : '';
+        const { href, external } = getArticleHref(item);
+        const hrefAttr = escapeHtml(href);
+        const targetAttr = external ? ' target="_blank" rel="noopener"' : '';
         return `
         <article class="news-card reveal-on-scroll" style="--reveal-delay:${Math.min(i * 90, 360)}ms">
-          <div class="news-thumb thumb-${escapeHtml(item.thumb || 'a')}">${thumb}</div>
+          <a href="${hrefAttr}"${targetAttr} class="news-thumb thumb-${escapeHtml(item.thumb || 'a')}">${thumb}</a>
           <p class="news-meta">${escapeHtml(item.date)}　・　${escapeHtml(item.tag)}</p>
-          <h3>${escapeHtml(item.title)}</h3>
+          <h3><a href="${hrefAttr}"${targetAttr}>${escapeHtml(item.title)}</a></h3>
           <p class="news-excerpt">${escapeHtml(item.excerpt)}</p>
-          <a href="${escapeHtml(item.link || '#')}" class="news-read">Read <span>→</span></a>
+          <a href="${hrefAttr}"${targetAttr} class="news-read">Read <span>→</span></a>
         </article>
       `;
       })
@@ -74,10 +86,12 @@
 
   // microCMSのレスポンス(contents配列)をこのページが使う形に変換
   const mapMicroCmsItem = (c) => ({
+    id: c.id || null,
     date: c.date || '',
     tag: c.tag || '',
     title: c.title || '',
     excerpt: c.excerpt || '',
+    content: c.content || '',
     link: c.link || '#',
     thumb: c.thumb || 'a',
     thumbnailUrl: c.thumbnail && c.thumbnail.url ? c.thumbnail.url : null,

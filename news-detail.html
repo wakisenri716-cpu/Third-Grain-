@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>News | Third Grain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Quicksand:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- グレインテクスチャ(全ページ共通オーバーレイ) -->
+<svg class="grain-defs" width="0" height="0">
+  <filter id="grainFilter">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="noise"/>
+    <feColorMatrix in="noise" type="matrix"
+      values="0 0 0 0 0
+              0 0 0 0 0
+              0 0 0 0 0
+              0 0 0 0.5 0"/>
+  </filter>
+</svg>
+<div class="grain-overlay"></div>
+
+<!-- ナビゲーション -->
+<header class="site-nav no-hero" id="siteNav">
+  <div class="nav-inner">
+    <a class="nav-mark" href="index.html#top">
+      <img class="nav-mark-main" src="assets/wordmark-light.png" alt="Third Grain">
+    </a>
+    <div class="nav-right">
+      <nav class="nav-links">
+        <a href="index.html#gallery">Tap List</a>
+        <a href="index.html#news">News</a>
+        <a href="index.html#concept">Concept</a>
+        <a href="index.html#products">Products</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+      <a class="nav-cta" href="https://www.hotpepper.jp/strJ004660130/" target="_blank" rel="noopener">Reserve</a>
+      <button class="nav-toggle" id="navToggle" aria-label="メニュー">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="section article">
+    <div class="section-inner narrow">
+      <a href="index.html#news" class="article-back">← Topicsに戻る</a>
+
+      <div id="articleLoading" class="article-state">読み込み中…</div>
+
+      <article id="articleBody" class="article-body" hidden>
+        <p class="eyebrow" id="articleMeta"></p>
+        <h1 class="article-title" id="articleTitle"></h1>
+        <div class="article-thumb" id="articleThumb"></div>
+        <div class="article-content" id="articleContent"></div>
+      </article>
+
+      <div id="articleError" class="article-state" hidden>
+        記事が見つかりませんでした。<br>
+        <a href="index.html#news" class="article-back">Topics一覧に戻る</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <img class="footer-logo" src="assets/wordmark-light.png" alt="Third Grain">
+  <p>&copy; 2026 Third Grain. All rights reserved. (仮フッター)</p>
+</footer>
+
+<script src="script.js"></script>
+<script src="news-detail.js"></script>
+</body>
+</html>

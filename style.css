@@ -104,6 +104,8 @@ a { color: inherit; text-decoration: none; }
   transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
 }
 .site-nav.scrolled .nav-mark-main { opacity: 1; transform: translateY(0); }
+.site-nav.no-hero .nav-mark-main { opacity: 1; transform: translateY(0); }
+.site-nav.no-hero { background: rgba(42, 36, 32, 0.85); backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--line-inverse); }
 
 .nav-right {
   display: flex;
@@ -312,6 +314,7 @@ a { color: inherit; text-decoration: none; }
 }
 .news-card { text-align: left; }
 .news-thumb {
+  display: block;
   aspect-ratio: 16 / 10;
   border-radius: 6px;
   margin-bottom: 18px;
@@ -549,6 +552,59 @@ a { color: inherit; text-decoration: none; }
   margin: 0 auto 14px;
 }
 .site-footer p { margin: 0; font-size: 0.75rem; letter-spacing: 0.04em; }
+
+/* ---------- 記事詳細ページ(News) ---------- */
+.article { padding-top: clamp(120px, 16vw, 180px); min-height: 60vh; }
+.article-back {
+  display: inline-block;
+  margin-bottom: 32px;
+  font-family: var(--font-tag);
+  font-size: 0.85rem;
+  color: var(--wheat-soft);
+  transition: color 0.3s var(--ease);
+}
+.article-back:hover { color: var(--wheat); }
+
+.article-state {
+  padding: 40px 0;
+  color: rgba(244, 239, 228, 0.6);
+  text-align: center;
+}
+
+.article-title {
+  font-family: var(--font-tag);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  line-height: 1.5;
+  margin: 8px 0 24px;
+  color: var(--cream);
+}
+.article-thumb {
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 32px;
+  background: var(--espresso-soft);
+}
+.article-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.article-content {
+  font-size: 1rem;
+  line-height: 1.9;
+  color: rgba(244, 239, 228, 0.85);
+}
+.article-content p { margin: 0 0 1.4em; }
+.article-content img { border-radius: 6px; margin: 1.4em 0; }
+.article-content a { color: var(--wheat-soft); text-decoration: underline; }
+.article-content h2, .article-content h3 {
+  font-family: var(--font-tag);
+  color: var(--cream);
+  margin: 1.6em 0 0.6em;
+}
 
 /* ---------- レスポンシブ ---------- */
 .sp-only { display: none; }
