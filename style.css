@@ -331,22 +331,16 @@ a { color: inherit; text-decoration: none; }
 .news-read:hover { color: var(--wheat); gap: 10px; }
 
 /* ---------- コンセプト ---------- */
-.concept-grid {
-  margin-top: 56px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 32px;
+.concept-blocks {
+  margin-top: 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
 }
-.concept-card {
-  padding: 32px 26px;
-  background: var(--espresso-soft);
-  border: 1px solid var(--line-inverse);
-  border-radius: 4px;
-  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
-}
-.concept-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 18px 32px -20px rgba(0, 0, 0, 0.5);
+.concept-block {
+  max-width: 760px;
+  padding-top: 40px;
+  border-top: 1px solid var(--line-inverse);
 }
 .concept-num {
   font-family: var(--font-logo);
@@ -354,16 +348,29 @@ a { color: inherit; text-decoration: none; }
   color: var(--wheat);
   letter-spacing: 0.1em;
 }
-.concept-card h3 {
+.concept-block h3 {
   font-family: var(--font-tag);
-  font-size: 1.15rem;
-  margin: 14px 0 10px;
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin: 14px 0 8px;
+  color: var(--cream);
 }
-.concept-card p {
-  margin: 0;
+.concept-tagline {
+  margin: 0 0 4px;
   font-size: 0.9rem;
+  color: var(--wheat-soft);
+}
+.concept-lead {
+  margin: 0 0 20px;
+  font-size: 1rem;
+  color: var(--cream);
+}
+.concept-block p {
+  margin: 0 0 16px;
+  font-size: 0.92rem;
   color: rgba(244, 239, 228, 0.68);
 }
+.concept-block p:last-child { margin-bottom: 0; }
 
 /* ---------- プロダクト ---------- */
 .products { background: var(--espresso-soft); }
