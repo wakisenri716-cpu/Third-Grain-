@@ -217,8 +217,8 @@ a { color: inherit; text-decoration: none; }
 .hero-logo {
   display: block;
   margin: 0 auto;
-  height: clamp(64px, 15vw, 168px);
-  width: auto;
+  width: clamp(320px, 58vw, 1000px);
+  height: auto;
   max-width: 90vw;
 }
 
@@ -625,7 +625,7 @@ a { color: inherit; text-decoration: none; }
 
 @media (max-width: 720px) {
   .sp-only { display: inline; }
-  .hero-logo { gap: 0; flex-direction: column; line-height: 0.95; }
+  .hero-logo { width: clamp(260px, 90vw, 520px); }
 
   /* ハンバーガーメニュー */
   .nav-toggle { display: flex; }
@@ -674,7 +674,6 @@ a { color: inherit; text-decoration: none; }
 
   /* 文字サイズを画面幅にあわせて少し抑える */
   .section-title { font-size: clamp(1.35rem, 6vw, 1.8rem); }
-  .hero-logo { height: clamp(52px, 18vw, 96px); }
   .hero-sub { font-size: 0.85rem; }
   .concept-block h3 { font-size: 1.2rem; }
   .concept-lead { font-size: 0.92rem; }
