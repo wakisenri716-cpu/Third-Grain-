@@ -169,13 +169,64 @@
     targets.forEach((el) => el.classList.add('is-visible'));
   }
 
-  // タップリストの自動横スクロール:中身を複製してシームレスにループさせる
+  // タップリストの自動横スクロール:中身を複製してシームレスにループさせつつ、
+  // 指でのスワイプ操作(ネイティブスクロール)ともぶつからないようscrollLeftを直接動かす
   const track = document.getElementById('marqueeTrack');
-  if (track) {
+  const marqueeEl = document.querySelector('.marquee');
+  if (track && marqueeEl) {
     const items = Array.from(track.children);
     items.forEach((item) => {
       track.appendChild(item.cloneNode(true));
     });
+
+    if (!prefersReducedMotion) {
+      const SPEED_PX_PER_SEC = 55;
+      let halfWidth = track.scrollWidth / 2;
+      let paused = false;
+      let resumeTimer = null;
+      let lastTime = null;
+
+      const recalc = () => { halfWidth = track.scrollWidth / 2; };
+      window.addEventListener('resize', recalc, { passive: true });
+
+      const pause = () => {
+        paused = true;
+        if (resumeTimer) clearTimeout(resumeTimer);
+      };
+      const scheduleResume = () => {
+        if (resumeTimer) clearTimeout(resumeTimer);
+        resumeTimer = setTimeout(() => { paused = false; lastTime = null; }, 1200);
+      };
+
+      // 手で触っている間・触った直後はオートスクロールを止めて、操作とぶつからないようにする
+      marqueeEl.addEventListener('pointerdown', pause, { passive: true });
+      marqueeEl.addEventListener('pointerup', scheduleResume, { passive: true });
+      marqueeEl.addEventListener('pointercancel', scheduleResume, { passive: true });
+      marqueeEl.addEventListener('touchend', scheduleResume, { passive: true });
+      marqueeEl.addEventListener('wheel', () => { pause(); scheduleResume(); }, { passive: true });
+      marqueeEl.addEventListener('mouseenter', pause);
+      marqueeEl.addEventListener('mouseleave', scheduleResume);
+
+      const step = (timestamp) => {
+        if (lastTime === null) lastTime = timestamp;
+        const dt = timestamp - lastTime;
+        lastTime = timestamp;
+
+        if (!paused && halfWidth > 0) {
+          marqueeEl.scrollLeft += (SPEED_PX_PER_SEC * dt) / 1000;
+        }
+        // シームレスループ:複製した後半に達したら/手前に戻ったら折り返す
+        if (halfWidth > 0) {
+          if (marqueeEl.scrollLeft >= halfWidth) {
+            marqueeEl.scrollLeft -= halfWidth;
+          } else if (marqueeEl.scrollLeft < 0) {
+            marqueeEl.scrollLeft += halfWidth;
+          }
+        }
+        window.requestAnimationFrame(step);
+      };
+      window.requestAnimationFrame(step);
+    }
   }
 
   // スクロール進捗バー
