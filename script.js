@@ -13,6 +13,18 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
+  // スマホ用ハンバーガーメニューの開閉
+  const navToggle = document.getElementById('navToggle');
+  if (nav && navToggle) {
+    navToggle.addEventListener('click', () => {
+      nav.classList.toggle('menu-open');
+    });
+    // メニュー内のリンクを押したら閉じる
+    nav.querySelectorAll('.nav-links a').forEach((link) => {
+      link.addEventListener('click', () => nav.classList.remove('menu-open'));
+    });
+  }
+
   // 最新情報(News)を microCMS から読み込んで描画する。
   // お知らせを更新したいときは、microCMSの管理画面(ニュース)でコンテンツを追加・編集するだけでよい。
   const MICROCMS_SERVICE = 'thirdgrain';

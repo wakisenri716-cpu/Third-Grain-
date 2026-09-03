@@ -160,7 +160,30 @@ a { color: inherit; text-decoration: none; }
   font-size: 0.85rem;
 }
 
-.nav-toggle { display: none; }
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 26px;
+  height: 20px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex: none;
+}
+.nav-toggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--cream);
+  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+}
+.site-nav.menu-open .nav-toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.site-nav.menu-open .nav-toggle span:nth-child(2) { opacity: 0; }
+.site-nav.menu-open .nav-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ---------- ヒーロー〜タップリスト(継ぎ目のない背景) ---------- */
 .dark-zone {
@@ -610,7 +633,62 @@ a { color: inherit; text-decoration: none; }
 .sp-only { display: none; }
 
 @media (max-width: 720px) {
-  .nav-links { display: none; }
   .sp-only { display: inline; }
   .hero-logo { gap: 0; flex-direction: column; line-height: 0.95; }
+
+  /* ハンバーガーメニュー */
+  .nav-toggle { display: flex; }
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: rgba(30, 26, 22, 0.97);
+    backdrop-filter: blur(10px);
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: max-height 0.35s var(--ease), opacity 0.3s var(--ease);
+  }
+  .site-nav.menu-open .nav-links {
+    max-height: 420px;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .nav-links a {
+    padding: 16px 24px;
+    width: 100%;
+    text-align: center;
+    border-bottom: 1px solid var(--line-inverse);
+  }
+
+  /* タップリスト:自動スクロールをやめて指で横スワイプできるようにする */
+  .marquee {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+  .marquee-track {
+    animation: none !important;
+    transform: none !important;
+  }
+  .tap-item { scroll-snap-align: start; }
+
+  /* 文字サイズを画面幅にあわせて少し抑える */
+  .section-title { font-size: clamp(1.35rem, 6vw, 1.8rem); }
+  .hero-logo { height: clamp(52px, 18vw, 96px); }
+  .hero-sub { font-size: 0.85rem; }
+  .concept-block h3 { font-size: 1.2rem; }
+  .concept-lead { font-size: 0.92rem; }
+  .article-title { font-size: 1.3rem; }
+  .news-card h3 { font-size: 0.95rem; }
+  .product-card h3 { font-size: 0.9rem; }
+  .nav-cta { font-size: 0.68rem; padding: 8px 16px; }
+  .tap-name { font-size: 0.9rem; }
+  .eyebrow { font-size: 0.7rem; }
 }
