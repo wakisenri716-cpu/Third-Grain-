@@ -233,7 +233,9 @@
   // 月表示カレンダー + 直近の予定リストを描画する
   const calGrid = document.getElementById('calGrid');
   if (calGrid) {
+    const CAL_SERVICE = 'karendaa'; // カレンダー用は別のmicroCMSサービス
     const CAL_ENDPOINT = 'events';
+    const CAL_API_KEY = '3QRsybfjZCDHHXB6AExrYDqNndfEB3EJRJzy';
     const monthLabel = document.getElementById('calMonthLabel');
     const agendaEl = document.getElementById('calAgenda');
     const detailEl = document.getElementById('calDetail');
@@ -360,8 +362,8 @@
 
     (async () => {
       try {
-        const url = `https://${MICROCMS_SERVICE}.microcms.io/api/v1/${CAL_ENDPOINT}?limit=100`;
-        const res = await fetch(url, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } });
+        const url = `https://${CAL_SERVICE}.microcms.io/api/v1/${CAL_ENDPOINT}?limit=100`;
+        const res = await fetch(url, { headers: { 'X-MICROCMS-API-KEY': CAL_API_KEY } });
         if (!res.ok) throw new Error(`events fetch failed: ${res.status}`);
         const data = await res.json();
         events = (Array.isArray(data.contents) ? data.contents : [])
