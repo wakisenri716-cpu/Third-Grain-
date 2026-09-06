@@ -229,6 +229,159 @@
     }
   }
 
+  // カレンダー(Events):microCMSの「events」から出店・イベント予定を読み込んで
+  // 月表示カレンダー + 直近の予定リストを描画する
+  const calGrid = document.getElementById('calGrid');
+  if (calGrid) {
+    const CAL_ENDPOINT = 'events';
+    const monthLabel = document.getElementById('calMonthLabel');
+    const agendaEl = document.getElementById('calAgenda');
+    const detailEl = document.getElementById('calDetail');
+    const prevBtn = document.getElementById('calPrev');
+    const nextBtn = document.getElementById('calNext');
+
+    let events = [];
+    const currentMonth = new Date();
+    currentMonth.setDate(1);
+    currentMonth.setHours(0, 0, 0, 0);
+
+    const parseDate = (s) => {
+      if (!s) return null;
+      const d = new Date(s);
+      return isNaN(d.getTime()) ? null : d;
+    };
+    const stripTime = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const sameDay = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+    const inRange = (day, start, end) => {
+      const d0 = stripTime(day);
+      const s0 = stripTime(start);
+      const e0 = end ? stripTime(end) : s0;
+      return d0 >= s0 && d0 <= e0;
+    };
+    const fmtRange = (start, end) => {
+      const f = (d) => `${d.getMonth() + 1}/${d.getDate()}`;
+      if (!end || sameDay(start, end)) return f(start);
+      return `${f(start)}〜${f(end)}`;
+    };
+
+    const observeReveal = (root) => {
+      const els = root.querySelectorAll('.reveal-on-scroll');
+      if ('IntersectionObserver' in window) {
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              obs.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15 });
+        els.forEach((el) => obs.observe(el));
+      } else {
+        els.forEach((el) => el.classList.add('is-visible'));
+      }
+    };
+
+    const showDetail = (ev) => {
+      detailEl.hidden = false;
+      detailEl.innerHTML = `
+        <h4>${escapeHtml(ev.title)}</h4>
+        <p>${fmtRange(ev.start, ev.end)}${ev.location ? '　・　' + escapeHtml(ev.location) : ''}</p>
+        ${ev.note ? `<p>${escapeHtml(ev.note)}</p>` : ''}
+        ${ev.link ? `<p><a href="${escapeHtml(ev.link)}" target="_blank" rel="noopener">詳しく見る →</a></p>` : ''}
+        <button type="button" class="calendar-detail-close" id="calDetailClose">閉じる ×</button>
+      `;
+      const closeBtn = document.getElementById('calDetailClose');
+      if (closeBtn) closeBtn.addEventListener('click', () => { detailEl.hidden = true; });
+      detailEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    };
+
+    const renderAgenda = () => {
+      const today = stripTime(new Date());
+      const upcoming = events
+        .filter((ev) => (ev.end || ev.start) >= today)
+        .sort((a, b) => a.start - b.start)
+        .slice(0, 6);
+
+      if (!upcoming.length) {
+        agendaEl.innerHTML = '<p class="section-text">現在予定されているイベントはありません。</p>';
+        return;
+      }
+
+      agendaEl.innerHTML = upcoming
+        .map((ev, i) => `
+          <div class="agenda-item reveal-on-scroll" style="--reveal-delay:${Math.min(i * 80, 320)}ms" data-index="${events.indexOf(ev)}">
+            <span class="agenda-date">${fmtRange(ev.start, ev.end)}</span>
+            <span class="agenda-title">${escapeHtml(ev.title)}</span>
+            ${ev.location ? `<span class="agenda-location">${escapeHtml(ev.location)}</span>` : ''}
+          </div>
+        `)
+        .join('');
+
+      agendaEl.querySelectorAll('.agenda-item').forEach((el) => {
+        el.addEventListener('click', () => showDetail(events[Number(el.dataset.index)]));
+      });
+      observeReveal(agendaEl);
+    };
+
+    const renderMonth = () => {
+      monthLabel.textContent = `${currentMonth.getFullYear()}年${currentMonth.getMonth() + 1}月`;
+      const year = currentMonth.getFullYear();
+      const month = currentMonth.getMonth();
+      const firstDay = new Date(year, month, 1);
+      const startWeekday = firstDay.getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const today = stripTime(new Date());
+
+      const dows = ['日', '月', '火', '水', '木', '金', '土'];
+      let html = dows.map((d) => `<div class="calendar-dow">${d}</div>`).join('');
+
+      for (let i = 0; i < startWeekday; i++) {
+        html += '<div class="calendar-day"></div>';
+      }
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateObj = new Date(year, month, day);
+        const dayEvents = events.filter((ev) => inRange(dateObj, ev.start, ev.end));
+        const classes = ['calendar-day', 'is-current-month'];
+        if (dayEvents.length) classes.push('has-event');
+        if (sameDay(dateObj, today)) classes.push('is-today');
+        html += `<div class="${classes.join(' ')}" ${dayEvents.length ? `data-index="${events.indexOf(dayEvents[0])}"` : ''}>
+          <span>${day}</span>
+          ${dayEvents.length ? '<span class="calendar-day-dot"></span>' : ''}
+        </div>`;
+      }
+      calGrid.innerHTML = html;
+      calGrid.querySelectorAll('.calendar-day.has-event').forEach((el) => {
+        el.addEventListener('click', () => showDetail(events[Number(el.dataset.index)]));
+      });
+    };
+
+    if (prevBtn) prevBtn.addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth() - 1); renderMonth(); });
+    if (nextBtn) nextBtn.addEventListener('click', () => { currentMonth.setMonth(currentMonth.getMonth() + 1); renderMonth(); });
+
+    (async () => {
+      try {
+        const url = `https://${MICROCMS_SERVICE}.microcms.io/api/v1/${CAL_ENDPOINT}?limit=100`;
+        const res = await fetch(url, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } });
+        if (!res.ok) throw new Error(`events fetch failed: ${res.status}`);
+        const data = await res.json();
+        events = (Array.isArray(data.contents) ? data.contents : [])
+          .map((c) => ({
+            title: c.title || '',
+            start: parseDate(c.startDate),
+            end: parseDate(c.endDate) || parseDate(c.startDate),
+            location: c.location || '',
+            note: c.note || '',
+            link: c.link || '',
+          }))
+          .filter((ev) => ev.start);
+      } catch (err) {
+        events = [];
+      }
+      renderMonth();
+      renderAgenda();
+    })();
+  }
+
   // スクロール進捗バー
   const progress = document.getElementById('scrollProgress');
 

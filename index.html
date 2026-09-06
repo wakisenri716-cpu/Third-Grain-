@@ -35,6 +35,7 @@
       <nav class="nav-links">
         <a href="#gallery">Tap List</a>
         <a href="#news">News</a>
+        <a href="#calendar">Calendar</a>
         <a href="#concept">Concept</a>
         <a href="#products">Products</a>
         <a href="#contact">Contact</a>
@@ -96,10 +97,31 @@
     </div>
   </section>
 
+  <!-- カレンダー(出店・イベント予定) -->
+  <section class="section calendar-section" id="calendar">
+    <div class="section-inner">
+      <p class="eyebrow reveal-on-scroll">03 — Events</p>
+      <h2 class="section-title reveal-on-scroll">Calendar</h2>
+      <p class="section-text reveal-on-scroll">（※出店・イベント情報はmicroCMSの管理画面から追加・編集できます）</p>
+
+      <div class="calendar-wrap reveal-on-scroll">
+        <div class="calendar-head">
+          <button type="button" class="calendar-nav" id="calPrev" aria-label="前の月">‹</button>
+          <p class="calendar-month" id="calMonthLabel">-</p>
+          <button type="button" class="calendar-nav" id="calNext" aria-label="次の月">›</button>
+        </div>
+        <div class="calendar-grid" id="calGrid"></div>
+      </div>
+
+      <div class="calendar-agenda" id="calAgenda"></div>
+      <div class="calendar-detail" id="calDetail" hidden></div>
+    </div>
+  </section>
+
   <!-- コンセプト -->
   <section class="section concept" id="concept">
     <div class="section-inner">
-      <p class="eyebrow reveal-on-scroll">03 — Concept</p>
+      <p class="eyebrow reveal-on-scroll">04 — Concept</p>
       <h2 class="section-title reveal-on-scroll">わたしたちが紡ぐ未来</h2>
       <p class="section-text reveal-on-scroll">
         わたしたちは長きにわたり、「たくさんの人においしいパンを届けたい」との想いでベーカリーとしてものづくりにたずさわってきました。
@@ -148,7 +170,7 @@
   <!-- プロダクト -->
   <section class="section products" id="products">
     <div class="section-inner">
-      <p class="eyebrow reveal-on-scroll">04 — Products</p>
+      <p class="eyebrow reveal-on-scroll">05 — Products</p>
       <h2 class="section-title reveal-on-scroll">Featured Items</h2>
       <p class="section-text reveal-on-scroll">（※商品情報はダミーです。あとで差し替えてください）</p>
 
@@ -182,7 +204,7 @@
   <!-- コンタクト -->
   <section class="section contact" id="contact">
     <div class="section-inner narrow">
-      <p class="eyebrow reveal-on-scroll">05 — Contact</p>
+      <p class="eyebrow reveal-on-scroll">06 — Contact</p>
       <h2 class="section-title reveal-on-scroll">Get in Touch</h2>
       <p class="section-text reveal-on-scroll">
         ご質問・オーダーメイドのご相談などお気軽にどうぞ。
