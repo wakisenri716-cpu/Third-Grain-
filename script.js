@@ -233,9 +233,9 @@
   // 月表示カレンダー + 直近の予定リストを描画する
   const calGrid = document.getElementById('calGrid');
   if (calGrid) {
-    const CAL_SERVICE = 'karendaa'; // カレンダー用は別のmicroCMSサービス
+    const CAL_SERVICE = MICROCMS_SERVICE; // カレンダーもNewsと同じthirdgrainサービス内のAPI
     const CAL_ENDPOINT = 'events';
-    const CAL_API_KEY = '3QRsybfjZCDHHXB6AExrYDqNndfEB3EJRJzy';
+    const CAL_API_KEY = MICROCMS_API_KEY;
     const monthLabel = document.getElementById('calMonthLabel');
     const agendaEl = document.getElementById('calAgenda');
     const detailEl = document.getElementById('calDetail');
