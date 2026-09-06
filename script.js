@@ -346,9 +346,11 @@
         const classes = ['calendar-day', 'is-current-month'];
         if (dayEvents.length) classes.push('has-event');
         if (sameDay(dateObj, today)) classes.push('is-today');
+        const extra = dayEvents.length - 1;
         html += `<div class="${classes.join(' ')}" ${dayEvents.length ? `data-index="${events.indexOf(dayEvents[0])}"` : ''}>
           <span>${day}</span>
-          ${dayEvents.length ? '<span class="calendar-day-dot"></span>' : ''}
+          ${dayEvents.length ? `<span class="calendar-day-title">${escapeHtml(dayEvents[0].title)}</span>` : ''}
+          ${extra > 0 ? `<span class="calendar-day-more">+${extra}</span>` : ''}
         </div>`;
       }
       calGrid.innerHTML = html;
