@@ -623,71 +623,74 @@ a { color: inherit; text-decoration: none; }
   color: rgba(244, 239, 228, 0.5);
 }
 
-.calendar-agenda {
-  margin-top: 36px;
+/* 日付クリックで開くイベント詳細ポップアップ */
+.calendar-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(20, 14, 10, 0.6);
+  backdrop-filter: blur(2px);
+  animation: calendarFadeIn 0.25s var(--ease);
 }
-.agenda-item {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 8px 16px;
-  padding: 14px 20px;
-  background: var(--espresso-soft);
-  border: 1px solid var(--line-inverse);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: transform 0.3s var(--ease), background 0.3s var(--ease);
-}
-.agenda-item:hover { transform: translateY(-3px); background: rgba(171, 127, 78, 0.14); }
-.agenda-date {
-  font-family: var(--font-logo);
-  font-size: 0.82rem;
-  color: var(--wheat);
-  white-space: nowrap;
-}
-.agenda-title {
-  font-family: var(--font-tag);
-  font-weight: 600;
-  color: var(--cream);
-  font-size: 0.95rem;
-}
-.agenda-location {
-  font-size: 0.82rem;
-  color: rgba(244, 239, 228, 0.6);
+.calendar-modal-backdrop[hidden] { display: none; }
+@keyframes calendarFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .calendar-detail {
-  margin-top: 24px;
-  padding: 24px;
+  position: relative;
+  width: min(420px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 32px 28px;
   background: var(--espresso-soft);
   border: 1px solid var(--line-inverse);
-  border-radius: 8px;
+  border-radius: 10px;
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.55);
+  animation: calendarPopIn 0.3s var(--ease);
+}
+@keyframes calendarPopIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 .calendar-detail h4 {
-  margin: 0 0 8px;
+  margin: 0 0 10px;
+  padding-right: 24px;
   font-family: var(--font-tag);
-  font-size: 1.1rem;
+  font-size: 1.15rem;
+  font-weight: 600;
   color: var(--cream);
 }
 .calendar-detail p {
-  margin: 4px 0;
+  margin: 6px 0;
   font-size: 0.9rem;
+  line-height: 1.6;
   color: rgba(244, 239, 228, 0.75);
 }
 .calendar-detail a { color: var(--wheat-soft); text-decoration: underline; }
 .calendar-detail-close {
-  margin-top: 14px;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: none;
   border: none;
   color: var(--wheat-soft);
-  font-family: var(--font-tag);
-  font-size: 0.8rem;
+  font-size: 1.1rem;
+  line-height: 1;
   cursor: pointer;
   padding: 0;
 }
+.calendar-detail-close:hover { color: var(--wheat); }
 .calendar-detail-close:hover { color: var(--wheat); }
 
 /* ---------- コンタクト ---------- */
@@ -840,6 +843,5 @@ a { color: inherit; text-decoration: none; }
   /* カレンダー */
   .calendar-day { font-size: 0.72rem; min-height: 56px; padding: 6px 2px; }
   .calendar-day-title { font-size: 0.52rem; -webkit-line-clamp: 1; }
-  .agenda-item { padding: 12px 16px; }
-  .agenda-title { font-size: 0.88rem; }
+  .calendar-detail { padding: 26px 20px; }
 }

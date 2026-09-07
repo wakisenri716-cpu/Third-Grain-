@@ -260,7 +260,7 @@
     const CAL_ENDPOINT = 'events';
     const CAL_API_KEY = MICROCMS_API_KEY;
     const monthLabel = document.getElementById('calMonthLabel');
-    const agendaEl = document.getElementById('calAgenda');
+    const modalBackdrop = document.getElementById('calModalBackdrop');
     const detailEl = document.getElementById('calDetail');
     const prevBtn = document.getElementById('calPrev');
     const nextBtn = document.getElementById('calNext');
@@ -289,64 +289,33 @@
       return `${f(start)}〜${f(end)}`;
     };
 
-    const observeReveal = (root) => {
-      const els = root.querySelectorAll('.reveal-on-scroll');
-      if ('IntersectionObserver' in window) {
-        const obs = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('is-visible');
-              obs.unobserve(entry.target);
-            }
-          });
-        }, { threshold: 0.15 });
-        els.forEach((el) => obs.observe(el));
-      } else {
-        els.forEach((el) => el.classList.add('is-visible'));
-      }
+    // 日付をクリックしたら、その予定をポップアップ(モーダル)で表示する
+    const closeDetail = () => {
+      if (modalBackdrop) modalBackdrop.hidden = true;
     };
 
     const showDetail = (ev) => {
-      detailEl.hidden = false;
       detailEl.innerHTML = `
+        <button type="button" class="calendar-detail-close" id="calDetailClose" aria-label="閉じる">×</button>
         <h4>${escapeHtml(ev.title)}</h4>
         <p>${fmtRange(ev.start, ev.end)}${ev.location ? '　・　' + escapeHtml(ev.location) : ''}</p>
         ${ev.note ? `<p>${escapeHtml(ev.note)}</p>` : ''}
         ${ev.link ? `<p><a href="${escapeHtml(ev.link)}" target="_blank" rel="noopener">詳しく見る →</a></p>` : ''}
-        <button type="button" class="calendar-detail-close" id="calDetailClose">閉じる ×</button>
       `;
+      if (modalBackdrop) modalBackdrop.hidden = false;
       const closeBtn = document.getElementById('calDetailClose');
-      if (closeBtn) closeBtn.addEventListener('click', () => { detailEl.hidden = true; });
-      detailEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      if (closeBtn) closeBtn.addEventListener('click', closeDetail);
     };
 
-    const renderAgenda = () => {
-      const today = stripTime(new Date());
-      const upcoming = events
-        .filter((ev) => (ev.end || ev.start) >= today)
-        .sort((a, b) => a.start - b.start)
-        .slice(0, 6);
-
-      if (!upcoming.length) {
-        agendaEl.innerHTML = '<p class="section-text">現在予定されているイベントはありません。</p>';
-        return;
-      }
-
-      agendaEl.innerHTML = upcoming
-        .map((ev, i) => `
-          <div class="agenda-item reveal-on-scroll" style="--reveal-delay:${Math.min(i * 80, 320)}ms" data-index="${events.indexOf(ev)}">
-            <span class="agenda-date">${fmtRange(ev.start, ev.end)}</span>
-            <span class="agenda-title">${escapeHtml(ev.title)}</span>
-            ${ev.location ? `<span class="agenda-location">${escapeHtml(ev.location)}</span>` : ''}
-          </div>
-        `)
-        .join('');
-
-      agendaEl.querySelectorAll('.agenda-item').forEach((el) => {
-        el.addEventListener('click', () => showDetail(events[Number(el.dataset.index)]));
+    // 背景クリック・Escapeキーでも閉じられるようにする
+    if (modalBackdrop) {
+      modalBackdrop.addEventListener('click', (e) => {
+        if (e.target === modalBackdrop) closeDetail();
       });
-      observeReveal(agendaEl);
-    };
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modalBackdrop && !modalBackdrop.hidden) closeDetail();
+    });
 
     const renderMonth = () => {
       monthLabel.textContent = `${currentMonth.getFullYear()}年${currentMonth.getMonth() + 1}月`;
@@ -405,7 +374,6 @@
         events = [];
       }
       renderMonth();
-      renderAgenda();
     })();
   }
 
