@@ -185,9 +185,14 @@
       let paused = false;
       let resumeTimer = null;
       let lastTime = null;
+      let lastSetScrollLeft = marqueeEl.scrollLeft;
 
       const recalc = () => { halfWidth = track.scrollWidth / 2; };
       window.addEventListener('resize', recalc, { passive: true });
+      // 画像の読み込みが遅れて幅が後から変わるケース(主にスマホの回線)にも追従する
+      track.querySelectorAll('img').forEach((img) => {
+        if (!img.complete) img.addEventListener('load', recalc, { once: true });
+      });
 
       const pause = () => {
         paused = true;
@@ -202,10 +207,27 @@
       marqueeEl.addEventListener('pointerdown', pause, { passive: true });
       marqueeEl.addEventListener('pointerup', scheduleResume, { passive: true });
       marqueeEl.addEventListener('pointercancel', scheduleResume, { passive: true });
+      marqueeEl.addEventListener('touchstart', pause, { passive: true });
       marqueeEl.addEventListener('touchend', scheduleResume, { passive: true });
       marqueeEl.addEventListener('wheel', () => { pause(); scheduleResume(); }, { passive: true });
-      marqueeEl.addEventListener('mouseenter', pause);
-      marqueeEl.addEventListener('mouseleave', scheduleResume);
+
+      // ホバー(マウス)操作ができる端末でだけ、マウスが乗っている間止める。
+      // スマホ(タッチ)ではmouseenterだけ発火してmouseleaveが来ず、
+      // 自動スクロールが止まったまま戻らなくなる不具合があったため、実マウス限定にする
+      const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      if (supportsHover) {
+        marqueeEl.addEventListener('mouseenter', pause);
+        marqueeEl.addEventListener('mouseleave', scheduleResume);
+      }
+
+      // 上記のイベントで拾いきれない操作(慣性スクロール中など)の保険として、
+      // 「自分で書き込んだ値ではないscrollLeftの変化」=ユーザー操作とみなして一時停止する
+      marqueeEl.addEventListener('scroll', () => {
+        if (Math.abs(marqueeEl.scrollLeft - lastSetScrollLeft) > 1) {
+          pause();
+          scheduleResume();
+        }
+      }, { passive: true });
 
       const step = (timestamp) => {
         if (lastTime === null) lastTime = timestamp;
@@ -223,6 +245,7 @@
             marqueeEl.scrollLeft += halfWidth;
           }
         }
+        lastSetScrollLeft = marqueeEl.scrollLeft;
         window.requestAnimationFrame(step);
       };
       window.requestAnimationFrame(step);
