@@ -203,7 +203,9 @@
   });
 
   const loadTapListFromMicroCms = async () => {
-    const url = `https://${MICROCMS_SERVICE}.microcms.io/api/v1/${MICROCMS_TAP_ENDPOINT}?limit=20`;
+    // ordersを指定しない場合microCMSは新しく追加した順(降順)で返すため、
+    // 追加した順番(古い→新しい)で並ぶように昇順を明示する
+    const url = `https://${MICROCMS_SERVICE}.microcms.io/api/v1/${MICROCMS_TAP_ENDPOINT}?limit=20&orders=createdAt`;
     const res = await fetch(url, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } });
     if (!res.ok) throw new Error(`taplist fetch failed: ${res.status}`);
     const data = await res.json();
