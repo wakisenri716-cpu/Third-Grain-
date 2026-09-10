@@ -229,6 +229,23 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  background:
+    /* 木目の細かい筋(大きめのスケールで、はっきり見えるように) */
+    repeating-linear-gradient(180deg,
+      rgba(0, 0, 0, 0.22) 0px, rgba(0, 0, 0, 0.22) 3px,
+      transparent 3px, transparent 16px,
+      rgba(0, 0, 0, 0.12) 16px, rgba(0, 0, 0, 0.12) 19px,
+      transparent 19px, transparent 34px),
+    repeating-linear-gradient(180deg,
+      rgba(255, 255, 255, 0.06) 0px, rgba(255, 255, 255, 0.06) 2px,
+      transparent 2px, transparent 27px),
+    /* 大きな板目(でかでかと見える帯) */
+    repeating-linear-gradient(180deg,
+      rgba(160, 64, 44, 0.18) 0px, rgba(160, 64, 44, 0.18) 140px,
+      transparent 140px, transparent 280px),
+    /* 節(木目のアクセント) */
+    radial-gradient(ellipse 170px 70px at 16% 28%, rgba(20, 8, 5, 0.4), transparent 70%),
+    radial-gradient(ellipse 140px 55px at 84% 74%, rgba(20, 8, 5, 0.32), transparent 70%);
 }
 .hero-content {
   position: relative;
