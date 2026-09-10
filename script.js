@@ -439,6 +439,21 @@
   const heroContent = document.querySelector('.hero-content');
   const heroEl = document.querySelector('.hero');
 
+  // ロゴは常時表示せず、開いたときに数秒だけ見せてからフェードアウトする
+  const HERO_INTRO_HOLD_MS = 3200;
+  let heroIntroDone = false;
+  if (heroContent) {
+    setTimeout(() => {
+      heroIntroDone = true;
+      heroContent.style.transition = prefersReducedMotion
+        ? 'opacity 0.3s linear'
+        : 'opacity 1s var(--ease), transform 1s var(--ease)';
+      if (!prefersReducedMotion) heroContent.style.transform = 'translateY(-16px)';
+      heroContent.style.opacity = '0';
+      heroContent.style.pointerEvents = 'none';
+    }, HERO_INTRO_HOLD_MS);
+  }
+
   let ticking = false;
   const updateOnScroll = () => {
     const scrollY = window.scrollY;
@@ -449,7 +464,7 @@
       progress.style.width = `${pct}%`;
     }
 
-    if (heroContent && heroEl && !prefersReducedMotion) {
+    if (heroContent && heroEl && !prefersReducedMotion && !heroIntroDone) {
       const heroHeight = heroEl.offsetHeight || 1;
       const ratio = Math.min(scrollY / heroHeight, 1);
       heroContent.style.transform = `translateY(${ratio * 60}px)`;
