@@ -229,23 +229,20 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background:
-    /* 木目の細かい筋(大きめのスケールで、はっきり見えるように) */
-    repeating-linear-gradient(180deg,
-      rgba(0, 0, 0, 0.22) 0px, rgba(0, 0, 0, 0.22) 3px,
-      transparent 3px, transparent 16px,
-      rgba(0, 0, 0, 0.12) 16px, rgba(0, 0, 0, 0.12) 19px,
-      transparent 19px, transparent 34px),
-    repeating-linear-gradient(180deg,
-      rgba(255, 255, 255, 0.06) 0px, rgba(255, 255, 255, 0.06) 2px,
-      transparent 2px, transparent 27px),
-    /* 大きな板目(でかでかと見える帯) */
-    repeating-linear-gradient(180deg,
-      rgba(160, 64, 44, 0.18) 0px, rgba(160, 64, 44, 0.18) 140px,
-      transparent 140px, transparent 280px),
-    /* 節(木目のアクセント) */
-    radial-gradient(ellipse 170px 70px at 16% 28%, rgba(20, 8, 5, 0.4), transparent 70%),
-    radial-gradient(ellipse 140px 55px at 84% 74%, rgba(20, 8, 5, 0.32), transparent 70%);
+  background: linear-gradient(165deg, #8a3a26 0%, #6e2c1c 45%, #4a1d13 100%);
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  width: 140%;
+  height: 140%;
+  z-index: 0;
+  filter: url(#woodGrainFilter);
+  mix-blend-mode: multiply;
+  opacity: 0.9;
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 78%, transparent 100%);
 }
 .hero-content {
   position: relative;
