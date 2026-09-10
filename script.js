@@ -169,6 +169,59 @@
     targets.forEach((el) => el.classList.add('is-visible'));
   }
 
+  // タップリスト(現在提供中のビール)を microCMS から読み込んで描画する。
+  // 内容を変えたいときは、microCMSの管理画面(タップリスト)でコンテンツを追加・編集・削除するだけでよい。
+  const MICROCMS_TAP_ENDPOINT = 'taplist'; // microCMS管理画面のURL(/apis/taplist)で確認したエンドポイント名
+  const marqueeTrackEl = document.getElementById('marqueeTrack');
+  const fallbackTapItems = [
+    { number: '01', name: 'Bread Crust', image: 'assets/tap/01.jpg' },
+    { number: '02', name: 'American Wheat', image: 'assets/tap/02.jpg' },
+    { number: '03', name: 'India Pale Ale', image: 'assets/tap/03.jpg' },
+    { number: '04', name: 'Pilsner', image: 'assets/tap/04.jpg' },
+    { number: '05', name: 'Oriental Citrus Ale', image: 'assets/tap/05.jpg' },
+    { number: '06', name: 'Strawberry Mint Ale', image: 'assets/tap/06.jpg' },
+    { number: '07', name: '2nd Anniv. Sour DIPA', image: 'assets/tap/07.jpg' },
+    { number: '08', name: 'Ume Maibock', image: 'assets/tap/08.jpg' },
+  ];
+
+  const renderTapList = (items) => {
+    if (!marqueeTrackEl) return;
+    marqueeTrackEl.innerHTML = items
+      .map((item) => `
+        <figure class="tap-item">
+          <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy">
+          <figcaption><span class="tap-num">${escapeHtml(item.number)}</span><span class="tap-name">${escapeHtml(item.name)}</span></figcaption>
+        </figure>
+      `)
+      .join('');
+  };
+
+  const mapMicroCmsTapItem = (c, i) => ({
+    number: c.number || String(i + 1).padStart(2, '0'),
+    name: c.name || '',
+    image: (c.image && c.image.url) || '',
+  });
+
+  const loadTapListFromMicroCms = async () => {
+    const url = `https://${MICROCMS_SERVICE}.microcms.io/api/v1/${MICROCMS_TAP_ENDPOINT}?limit=20`;
+    const res = await fetch(url, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } });
+    if (!res.ok) throw new Error(`taplist fetch failed: ${res.status}`);
+    const data = await res.json();
+    const items = Array.isArray(data.contents) ? data.contents.map(mapMicroCmsTapItem) : [];
+    return items.filter((item) => item.image); // 画像未設定のものは表示しない
+  };
+
+  if (marqueeTrackEl) {
+    let tapItems = [];
+    try {
+      tapItems = await loadTapListFromMicroCms();
+    } catch (err) {
+      // microCMSに未設定・接続エラーの場合は埋め込みのダミーで表示を保つ
+      tapItems = [];
+    }
+    renderTapList(tapItems.length ? tapItems : fallbackTapItems);
+  }
+
   // タップリストの自動横スクロール:中身を複製してシームレスにループさせつつ、
   // 指でのスワイプ操作(ネイティブスクロール)ともぶつからないようscrollLeftを直接動かす
   const track = document.getElementById('marqueeTrack');
