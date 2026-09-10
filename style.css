@@ -142,7 +142,19 @@ a { color: inherit; text-decoration: none; }
   flex: none;
   padding: 9px 22px;
   border-radius: 999px;
-  background: var(--wheat);
+  background:
+    radial-gradient(ellipse 11px 5px at 20% 72%, rgba(30, 12, 6, 0.35), transparent 70%),
+    radial-gradient(ellipse 8px 4px at 82% 24%, rgba(30, 12, 6, 0.22), transparent 70%),
+    repeating-linear-gradient(180deg,
+      rgba(0, 0, 0, 0.16) 0px, rgba(0, 0, 0, 0.16) 1px,
+      transparent 1px, transparent 4px,
+      rgba(0, 0, 0, 0.08) 4px, rgba(0, 0, 0, 0.08) 5px,
+      transparent 5px, transparent 9px),
+    repeating-linear-gradient(180deg,
+      rgba(255, 255, 255, 0.12) 0px, rgba(255, 255, 255, 0.12) 1px,
+      transparent 1px, transparent 7px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(0, 0, 0, 0.1)),
+    var(--wheat);
   color: var(--espresso);
   font-family: var(--font-tag);
   font-weight: 700;
@@ -152,7 +164,22 @@ a { color: inherit; text-decoration: none; }
   white-space: nowrap;
   transition: background 0.3s var(--ease), transform 0.3s var(--ease);
 }
-.nav-cta:hover { background: var(--wheat-soft); transform: translateY(-1px); }
+.nav-cta:hover {
+  background:
+    radial-gradient(ellipse 11px 5px at 20% 72%, rgba(30, 12, 6, 0.28), transparent 70%),
+    radial-gradient(ellipse 8px 4px at 82% 24%, rgba(30, 12, 6, 0.18), transparent 70%),
+    repeating-linear-gradient(180deg,
+      rgba(0, 0, 0, 0.13) 0px, rgba(0, 0, 0, 0.13) 1px,
+      transparent 1px, transparent 4px,
+      rgba(0, 0, 0, 0.06) 4px, rgba(0, 0, 0, 0.06) 5px,
+      transparent 5px, transparent 9px),
+    repeating-linear-gradient(180deg,
+      rgba(255, 255, 255, 0.14) 0px, rgba(255, 255, 255, 0.14) 1px,
+      transparent 1px, transparent 7px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(0, 0, 0, 0.08)),
+    var(--wheat-soft);
+  transform: translateY(-1px);
+}
 
 .ec-cta {
   display: inline-block;
