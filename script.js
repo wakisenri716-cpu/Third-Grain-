@@ -262,8 +262,16 @@
       track.appendChild(item.cloneNode(true));
     });
 
-    let halfWidth = track.scrollWidth / 2;
-    const recalc = () => { halfWidth = track.scrollWidth / 2; };
+    // ループ1周分の距離は「複製後の先頭アイテム」の位置と「本来の先頭アイテム」の位置の差で正確に測る。
+    // track.scrollWidth / 2 は左右の余白(padding)がループの継ぎ目に対して非対称なため、
+    // 実際の1周の距離とわずかにズレてしまい、そのズレが周回のたびに蓄積して
+    // 最終的に画面が中身のない位置を映してしまう(何も表示されなくなる)不具合の原因だった。
+    let period = 0;
+    const recalc = () => {
+      const firstClone = track.children[items.length];
+      period = firstClone ? firstClone.offsetLeft - track.children[0].offsetLeft : 0;
+    };
+    recalc();
     window.addEventListener('resize', recalc, { passive: true });
     // 画像の読み込みが遅れて幅が後から変わるケース(主にスマホの回線)にも追従する
     track.querySelectorAll('img').forEach((img) => {
@@ -272,9 +280,9 @@
 
     let offset = 0; // translateXに渡す値(0以下で左方向に進む)
     const wrapOffset = () => {
-      if (halfWidth <= 0) return;
-      while (offset <= -halfWidth) offset += halfWidth;
-      while (offset > 0) offset -= halfWidth;
+      if (period <= 0) return;
+      while (offset <= -period) offset += period;
+      while (offset > 0) offset -= period;
     };
     const applyTransform = () => {
       track.style.transform = `translateX(${offset}px)`;
@@ -353,7 +361,7 @@
         const dt = timestamp - lastTime;
         lastTime = timestamp;
 
-        if (!paused && !dragging && halfWidth > 0) {
+        if (!paused && !dragging && period > 0) {
           offset -= (SPEED_PX_PER_SEC * dt) / 1000;
           wrapOffset();
           applyTransform();
