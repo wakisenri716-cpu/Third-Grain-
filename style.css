@@ -615,11 +615,57 @@ a { color: inherit; text-decoration: none; }
   color: rgba(244, 239, 228, 0.5);
 }
 
-/* 日付クリックで開くイベント詳細ポップアップ */
+/* カレンダー本体:通常のスクロールには出さず、ナビの「Calendar」から開くオーバーレイ */
+.calendar-page-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(20, 14, 10, 0.72);
+  backdrop-filter: blur(2px);
+  animation: calendarFadeIn 0.25s var(--ease);
+}
+.calendar-page-overlay[hidden] { display: none; }
+.calendar-page-panel {
+  position: relative;
+  width: min(640px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: clamp(28px, 4vw, 44px);
+  background: var(--espresso-soft);
+  border: 1px solid var(--line-inverse);
+  border-radius: 12px;
+  box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.6);
+  animation: calendarPopIn 0.3s var(--ease);
+}
+.calendar-page-panel .calendar-wrap { margin-top: 28px; }
+.calendar-page-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--wheat-soft);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+.calendar-page-close:hover { color: var(--wheat); }
+
+/* 日付クリックで開くイベント詳細ポップアップ(カレンダーオーバーレイの上に重ねて出す) */
 .calendar-modal-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 200;
+  z-index: 260;
   display: flex;
   align-items: center;
   justify-content: center;

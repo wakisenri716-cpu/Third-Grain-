@@ -25,6 +25,32 @@
     });
   }
 
+  // カレンダーは通常のスクロールには出さず、ナビの「Calendar」から開くオーバーレイにする
+  const calendarOverlay = document.getElementById('calendarOverlay');
+  const calendarOverlayClose = document.getElementById('calendarOverlayClose');
+  if (calendarOverlay) {
+    const openCalendarOverlay = () => { calendarOverlay.hidden = false; };
+    const closeCalendarOverlay = () => { calendarOverlay.hidden = true; };
+
+    document.querySelectorAll('a[href="#calendar"]').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        openCalendarOverlay();
+      });
+    });
+    if (calendarOverlayClose) calendarOverlayClose.addEventListener('click', closeCalendarOverlay);
+    calendarOverlay.addEventListener('click', (e) => {
+      if (e.target === calendarOverlay) closeCalendarOverlay();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || calendarOverlay.hidden) return;
+      // イベント詳細ポップアップが開いていればそちらを先に閉じる
+      const detailBackdrop = document.getElementById('calModalBackdrop');
+      if (detailBackdrop && !detailBackdrop.hidden) return;
+      closeCalendarOverlay();
+    });
+  }
+
   // 最新情報(News)を microCMS から読み込んで描画する。
   // お知らせを更新したいときは、microCMSの管理画面(ニュース)でコンテンツを追加・編集するだけでよい。
   const MICROCMS_SERVICE = 'thirdgrain';

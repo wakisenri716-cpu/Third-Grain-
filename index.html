@@ -48,6 +48,28 @@
   </div>
 </header>
 
+<!-- カレンダー(出店・イベント予定):通常のスクロールには出さず、ナビの「Calendar」から開くオーバーレイ -->
+<div class="calendar-page-overlay" id="calendarOverlay" hidden>
+  <div class="calendar-page-panel">
+    <button type="button" class="calendar-page-close" id="calendarOverlayClose" aria-label="閉じる">×</button>
+    <p class="eyebrow">03 — Events</p>
+    <h2 class="section-title">Calendar</h2>
+
+    <div class="calendar-wrap">
+      <div class="calendar-head">
+        <button type="button" class="calendar-nav" id="calPrev" aria-label="前の月">‹</button>
+        <p class="calendar-month" id="calMonthLabel">-</p>
+        <button type="button" class="calendar-nav" id="calNext" aria-label="次の月">›</button>
+      </div>
+      <div class="calendar-grid" id="calGrid"></div>
+    </div>
+  </div>
+</div>
+
+<div class="calendar-modal-backdrop" id="calModalBackdrop" hidden>
+  <div class="calendar-detail" id="calDetail"></div>
+</div>
+
 <!-- ヒーロー〜タップリスト:境目のない一続きのダーク背景 -->
 <div class="dark-zone">
   <section class="hero" id="top">
@@ -83,28 +105,6 @@
       <h2 class="section-title reveal-on-scroll">Topics</h2>
 
       <div class="news-grid" id="newsGrid"></div>
-    </div>
-  </section>
-
-  <!-- カレンダー(出店・イベント予定) -->
-  <section class="section calendar-section" id="calendar">
-    <div class="section-inner">
-      <p class="eyebrow reveal-on-scroll">03 — Events</p>
-      <h2 class="section-title reveal-on-scroll">Calendar</h2>
-
-      <div class="calendar-wrap reveal-on-scroll">
-        <div class="calendar-head">
-          <button type="button" class="calendar-nav" id="calPrev" aria-label="前の月">‹</button>
-          <p class="calendar-month" id="calMonthLabel">-</p>
-          <button type="button" class="calendar-nav" id="calNext" aria-label="次の月">›</button>
-        </div>
-        <div class="calendar-grid" id="calGrid"></div>
-      </div>
-
-    </div>
-
-    <div class="calendar-modal-backdrop" id="calModalBackdrop" hidden>
-      <div class="calendar-detail" id="calDetail"></div>
     </div>
   </section>
 
