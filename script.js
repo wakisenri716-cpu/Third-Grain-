@@ -250,8 +250,10 @@
     renderTapList(tapItems.length ? tapItems : fallbackTapItems);
   }
 
-  // タップリストの自動横スクロール:中身を複製してシームレスにループさせつつ、
-  // 指でのスワイプ操作(ネイティブスクロール)ともぶつからないようscrollLeftを直接動かす
+  // タップリストの自動横スクロール:中身を複製してシームレスにループさせる。
+  // ネイティブの横スクロールには頼らず、track を transform: translateX() で直接動かす方式にする。
+  // (scrollLeftをJSで書き換える方式は、スマホの慣性スクロールと衝突して
+  //  自動スクロールが止まってしまう/操作できなくなることがあったため)
   const track = document.getElementById('marqueeTrack');
   const marqueeEl = document.querySelector('.marquee');
   if (track && marqueeEl) {
@@ -260,73 +262,102 @@
       track.appendChild(item.cloneNode(true));
     });
 
+    let halfWidth = track.scrollWidth / 2;
+    const recalc = () => { halfWidth = track.scrollWidth / 2; };
+    window.addEventListener('resize', recalc, { passive: true });
+    // 画像の読み込みが遅れて幅が後から変わるケース(主にスマホの回線)にも追従する
+    track.querySelectorAll('img').forEach((img) => {
+      if (!img.complete) img.addEventListener('load', recalc, { once: true });
+    });
+
+    let offset = 0; // translateXに渡す値(0以下で左方向に進む)
+    const wrapOffset = () => {
+      if (halfWidth <= 0) return;
+      while (offset <= -halfWidth) offset += halfWidth;
+      while (offset > 0) offset -= halfWidth;
+    };
+    const applyTransform = () => {
+      track.style.transform = `translateX(${offset}px)`;
+    };
+
+    let paused = false;
+    let resumeTimer = null;
+    const pause = () => {
+      paused = true;
+      if (resumeTimer) clearTimeout(resumeTimer);
+    };
+    const scheduleResume = () => {
+      if (resumeTimer) clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(() => { paused = false; }, 1200);
+    };
+
+    // 指(タッチ)・マウスのドラッグで直接動かせるようにする
+    let dragging = false;
+    let dragStartX = 0;
+    let dragStartOffset = 0;
+    const getClientX = (e) => (e.touches ? e.touches[0].clientX : e.clientX);
+    const dragStart = (e) => {
+      dragging = true;
+      pause();
+      dragStartX = getClientX(e);
+      dragStartOffset = offset;
+      marqueeEl.classList.add('is-dragging');
+    };
+    const dragMove = (e) => {
+      if (!dragging) return;
+      offset = dragStartOffset + (getClientX(e) - dragStartX);
+      wrapOffset();
+      applyTransform();
+    };
+    const dragEnd = () => {
+      if (!dragging) return;
+      dragging = false;
+      marqueeEl.classList.remove('is-dragging');
+      scheduleResume();
+    };
+
+    marqueeEl.addEventListener('touchstart', dragStart, { passive: true });
+    marqueeEl.addEventListener('touchmove', dragMove, { passive: true });
+    marqueeEl.addEventListener('touchend', dragEnd, { passive: true });
+    marqueeEl.addEventListener('touchcancel', dragEnd, { passive: true });
+    marqueeEl.addEventListener('mousedown', (e) => { dragStart(e); e.preventDefault(); });
+    window.addEventListener('mousemove', dragMove);
+    window.addEventListener('mouseup', dragEnd);
+
+    // トラックパッド等の横方向ホイール操作にも反応させる
+    marqueeEl.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+        e.preventDefault();
+        offset -= e.deltaX;
+        wrapOffset();
+        applyTransform();
+      }
+      pause();
+      scheduleResume();
+    }, { passive: false });
+
+    // ホバー(マウス)操作ができる端末でだけ、マウスが乗っている間止める。
+    // スマホ(タッチ)ではmouseenterだけ発火してmouseleaveが来ず、
+    // 自動スクロールが止まったまま戻らなくなる不具合があったため、実マウス限定にする
+    const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (supportsHover) {
+      marqueeEl.addEventListener('mouseenter', pause);
+      marqueeEl.addEventListener('mouseleave', () => { if (!dragging) scheduleResume(); });
+    }
+
     if (!prefersReducedMotion) {
       const SPEED_PX_PER_SEC = 55;
-      let halfWidth = track.scrollWidth / 2;
-      let paused = false;
-      let resumeTimer = null;
       let lastTime = null;
-      let lastSetScrollLeft = marqueeEl.scrollLeft;
-
-      const recalc = () => { halfWidth = track.scrollWidth / 2; };
-      window.addEventListener('resize', recalc, { passive: true });
-      // 画像の読み込みが遅れて幅が後から変わるケース(主にスマホの回線)にも追従する
-      track.querySelectorAll('img').forEach((img) => {
-        if (!img.complete) img.addEventListener('load', recalc, { once: true });
-      });
-
-      const pause = () => {
-        paused = true;
-        if (resumeTimer) clearTimeout(resumeTimer);
-      };
-      const scheduleResume = () => {
-        if (resumeTimer) clearTimeout(resumeTimer);
-        resumeTimer = setTimeout(() => { paused = false; lastTime = null; }, 1200);
-      };
-
-      // 手で触っている間・触った直後はオートスクロールを止めて、操作とぶつからないようにする
-      marqueeEl.addEventListener('pointerdown', pause, { passive: true });
-      marqueeEl.addEventListener('pointerup', scheduleResume, { passive: true });
-      marqueeEl.addEventListener('pointercancel', scheduleResume, { passive: true });
-      marqueeEl.addEventListener('touchstart', pause, { passive: true });
-      marqueeEl.addEventListener('touchend', scheduleResume, { passive: true });
-      marqueeEl.addEventListener('wheel', () => { pause(); scheduleResume(); }, { passive: true });
-
-      // ホバー(マウス)操作ができる端末でだけ、マウスが乗っている間止める。
-      // スマホ(タッチ)ではmouseenterだけ発火してmouseleaveが来ず、
-      // 自動スクロールが止まったまま戻らなくなる不具合があったため、実マウス限定にする
-      const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-      if (supportsHover) {
-        marqueeEl.addEventListener('mouseenter', pause);
-        marqueeEl.addEventListener('mouseleave', scheduleResume);
-      }
-
-      // 上記のイベントで拾いきれない操作(慣性スクロール中など)の保険として、
-      // 「自分で書き込んだ値ではないscrollLeftの変化」=ユーザー操作とみなして一時停止する
-      marqueeEl.addEventListener('scroll', () => {
-        if (Math.abs(marqueeEl.scrollLeft - lastSetScrollLeft) > 1) {
-          pause();
-          scheduleResume();
-        }
-      }, { passive: true });
-
       const step = (timestamp) => {
         if (lastTime === null) lastTime = timestamp;
         const dt = timestamp - lastTime;
         lastTime = timestamp;
 
-        if (!paused && halfWidth > 0) {
-          marqueeEl.scrollLeft += (SPEED_PX_PER_SEC * dt) / 1000;
+        if (!paused && !dragging && halfWidth > 0) {
+          offset -= (SPEED_PX_PER_SEC * dt) / 1000;
+          wrapOffset();
+          applyTransform();
         }
-        // シームレスループ:複製した後半に達したら/手前に戻ったら折り返す
-        if (halfWidth > 0) {
-          if (marqueeEl.scrollLeft >= halfWidth) {
-            marqueeEl.scrollLeft -= halfWidth;
-          } else if (marqueeEl.scrollLeft < 0) {
-            marqueeEl.scrollLeft += halfWidth;
-          }
-        }
-        lastSetScrollLeft = marqueeEl.scrollLeft;
         window.requestAnimationFrame(step);
       };
       window.requestAnimationFrame(step);
