@@ -208,6 +208,8 @@ a { color: inherit; text-decoration: none; }
   z-index: 2;
   text-align: center;
   padding: 0 24px;
+  /* タグラインとThird Grainのロゴを元アートワークと同じ比率で並べるための共通の幅 */
+  --lockup-w: clamp(300px, 50vw, 820px);
 }
 /* 画面には見せず、読み上げ・検索エンジン向けだけに残すテキスト */
 .sr-only {
@@ -220,9 +222,11 @@ a { color: inherit; text-decoration: none; }
 }
 .hero-tagline {
   display: block;
-  margin: 0 auto 22px;
-  height: clamp(16px, 2.6vw, 26px);
-  width: auto;
+  margin: 0 auto;
+  margin-bottom: calc(var(--lockup-w) * 0.1414);
+  width: var(--lockup-w);
+  height: auto;
+  max-width: 92vw;
 }
 /* ロゴ登場アニメーション */
 .reveal-item {
@@ -238,7 +242,7 @@ a { color: inherit; text-decoration: none; }
   position: relative;
   overflow: hidden;
   margin: 0 auto;
-  width: clamp(300px, 50vw, 820px);
+  width: var(--lockup-w);
   aspect-ratio: 1691 / 245;
   max-width: 92vw;
 }
@@ -851,7 +855,7 @@ a { color: inherit; text-decoration: none; }
 
 @media (max-width: 720px) {
   .sp-only { display: inline; }
-  .logo-stage { width: clamp(240px, 82vw, 520px); }
+  .hero-content { --lockup-w: clamp(240px, 82vw, 520px); }
 
   /* ハンバーガーメニュー */
   .nav-toggle { display: flex; }
