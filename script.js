@@ -13,6 +13,12 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
+  // ロゴの登場モーション:文字ごとにマスクした断片を rise/fromTop/fromBot/blur で出す
+  const logoStage = document.getElementById('logoStage');
+  if (logoStage) {
+    requestAnimationFrame(() => setTimeout(() => logoStage.classList.add('logo-anim'), 150));
+  }
+
   // スマホ用ハンバーガーメニューの開閉
   const navToggle = document.getElementById('navToggle');
   if (nav && navToggle) {
