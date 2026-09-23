@@ -224,6 +224,30 @@ a { color: inherit; text-decoration: none; }
   width: clamp(300px, 50vw, 820px);
   aspect-ratio: 1691 / 680;
   max-width: 92vw;
+  container-type: inline-size;
+}
+/* タグライン(Better life with upcycle)は文字サイズの小さいマスク細断だと
+   実機のブラウザで縁に線状のノイズが出ることがあったため、通常のテキストで描く */
+.logo-tagline-text {
+  position: absolute;
+  left: 1.005%;
+  width: 97.93%;
+  top: 1.912%;
+  height: 24.706%;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  font-family: "Jost", var(--font-tag), sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  color: var(--cream);
+  font-size: 4.6cqw;
+  white-space: nowrap;
+}
+.logo-anim .logo-tagline-text { animation: logoTaglineFade 0.8s ease-out 0.3s both; }
+@keyframes logoTaglineFade {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
 }
 .logo-stage .pc { position: absolute; overflow: hidden; }
 .logo-stage .ink {
@@ -245,6 +269,7 @@ a { color: inherit; text-decoration: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .logo-anim .ink { animation: none !important; }
+  .logo-tagline-text { opacity: 1; animation: none !important; }
 }
 .scroll-cue {
   position: absolute;
