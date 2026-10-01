@@ -14,9 +14,11 @@
   --line: rgba(42, 36, 32, 0.14);
   --line-inverse: rgba(244, 239, 228, 0.18);
 
-  --font-logo: "Poppins", "Zen Kaku Gothic New", sans-serif;
-  --font-tag: "Poppins", "Zen Kaku Gothic New", sans-serif;
-  --font-jp: "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+  /* EC(upcycle-beer.com)のメインフォント(和文:筑紫Aオールド明朝/欧文:Cormorant Garamond)は
+     有料のWebフォント契約が必要なため、雰囲気の近い無料フォントで代用 */
+  --font-logo: "Cormorant Garamond", "Shippori Mincho", serif;
+  --font-tag: "Cormorant Garamond", "Shippori Mincho", serif;
+  --font-jp: "Shippori Mincho", "Hiragino Mincho ProN", serif;
 
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
