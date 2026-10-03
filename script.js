@@ -380,7 +380,39 @@
   };
 
   initAutoMarquee(document.getElementById('marqueeTrack'));
-  initAutoMarquee(document.getElementById('atmosphereTrack'));
+
+  // 店内の雰囲気:フルブリードのスライドショー。数秒ごとに自動で次の写真に切り替わる
+  // (upcycle-beer.comのトップページと同じ構成)。下部のドットで手動切り替えもできる。
+  const atmoSlideshow = document.getElementById('atmoSlideshow');
+  if (atmoSlideshow) {
+    const slides = Array.from(atmoSlideshow.querySelectorAll('.atmo-slide'));
+    const dotsWrap = document.getElementById('atmoDots');
+    let current = Math.max(slides.findIndex((s) => s.classList.contains('is-active')), 0);
+
+    dotsWrap.innerHTML = slides
+      .map((_, i) => `<button type="button" class="atmo-dot${i === current ? ' is-active' : ''}" aria-label="${i + 1}枚目の写真を表示"></button>`)
+      .join('');
+    const dots = Array.from(dotsWrap.children);
+
+    const goTo = (index) => {
+      slides[current].classList.remove('is-active');
+      dots[current].classList.remove('is-active');
+      current = (index + slides.length) % slides.length;
+      slides[current].classList.add('is-active');
+      dots[current].classList.add('is-active');
+    };
+
+    let timer = null;
+    const SLIDE_INTERVAL_MS = 4500;
+    const resetTimer = () => {
+      if (timer) clearInterval(timer);
+      if (prefersReducedMotion) return;
+      timer = setInterval(() => goTo(current + 1), SLIDE_INTERVAL_MS);
+    };
+
+    dots.forEach((dot, i) => dot.addEventListener('click', () => { goTo(i); resetTimer(); }));
+    resetTimer();
+  }
 
   // カレンダー(Events):microCMSの「events」から出店・イベント予定を読み込んで
   // 月表示カレンダー + 直近の予定リストを描画する

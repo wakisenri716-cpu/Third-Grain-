@@ -112,42 +112,25 @@
     </div>
   </section>
 
-  <!-- 店内の雰囲気(自動横スクロール)。
+  <!-- 店内の雰囲気(フルブリードのスライドショー。数秒ごとに自動で切り替わる、upcycle-beer.comのトップと同じ構成)。
        写真はまだ仮のプレースホルダー。実写に差し替えるときは、
-       assets/atmosphere/ に写真を置いて、各 .atmo-thumb を
-       <img src="assets/atmosphere/xxx.jpg" alt="..."> に置き換える -->
-  <section class="section atmosphere" id="atmosphere">
-    <div class="section-inner">
-      <p class="eyebrow reveal-on-scroll light">02 — Atmosphere</p>
-      <h2 class="section-title light reveal-on-scroll">Inside Third Grain</h2>
-    </div>
-    <div class="marquee">
-      <div class="marquee-track" id="atmosphereTrack">
-        <figure class="atmo-item">
-          <div class="atmo-thumb atmo-a"></div>
-          <figcaption class="atmo-caption">店内</figcaption>
-        </figure>
-        <figure class="atmo-item">
-          <div class="atmo-thumb atmo-b"></div>
-          <figcaption class="atmo-caption">カウンター</figcaption>
-        </figure>
-        <figure class="atmo-item">
-          <div class="atmo-thumb atmo-c"></div>
-          <figcaption class="atmo-caption">醸造タンク</figcaption>
-        </figure>
-        <figure class="atmo-item">
-          <div class="atmo-thumb atmo-d"></div>
-          <figcaption class="atmo-caption">グラスの一杯</figcaption>
-        </figure>
-        <figure class="atmo-item">
-          <div class="atmo-thumb atmo-e"></div>
-          <figcaption class="atmo-caption">外観</figcaption>
-        </figure>
-        <figure class="atmo-item">
-          <div class="atmo-thumb atmo-f"></div>
-          <figcaption class="atmo-caption">くつろぎの時間</figcaption>
-        </figure>
+       assets/atmosphere/ に写真を置いて、各 .atmo-slide の
+       background: linear-gradient(...) を
+       background-image: url('assets/atmosphere/xxx.jpg') に置き換える -->
+  <section class="atmosphere" id="atmosphere">
+    <div class="atmo-slideshow" id="atmoSlideshow">
+      <div class="atmo-slide atmo-a is-active"></div>
+      <div class="atmo-slide atmo-b"></div>
+      <div class="atmo-slide atmo-c"></div>
+      <div class="atmo-slide atmo-d"></div>
+      <div class="atmo-slide atmo-e"></div>
+      <div class="atmo-slide atmo-f"></div>
+      <div class="atmo-slideshow-scrim"></div>
+      <div class="atmo-slideshow-content">
+        <p class="eyebrow light">02 — Atmosphere</p>
+        <h2 class="section-title light">Inside Third Grain</h2>
       </div>
+      <div class="atmo-dots" id="atmoDots"></div>
     </div>
   </section>
 </div>
