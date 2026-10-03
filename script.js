@@ -259,50 +259,49 @@
     renderTapList(tapItems.length ? tapItems : fallbackTapItems);
   }
 
-  // タップリストのアーチ状カルーセル:中央の1枚だけくっきり映し、両隣はもやがかって
-  // (ぼかし・縮小・半透明で)待機しているように見せ、数秒ごとに自動で次へ送る。
-  // 各カードの位置はCSS変数 --d(中心からの符号付き距離)をJSから渡し、
-  // 見た目(ずらし方・ぼかし量など)はCSS側の計算式にまかせる。
+  // タップリストのアーチ状カルーセル:中央の1枚がいちばん大きく、離れるほど小さく
+  // 半透明になっていく(写真そのものは加工しない)。index を1枚ずつ飛ばすのではなく、
+  // 位置を連続値(current)としてrequestAnimationFrameで毎フレーム少しずつ進めることで、
+  // 最初の自動横スクロールと同じようになめらかに流れ続けるようにしている。
   const tapCarousel = document.getElementById('tapCarousel');
   if (tapCarousel && tapCarouselTrackEl) {
     const cards = Array.from(tapCarouselTrackEl.children);
     const count = cards.length;
 
     if (count > 0) {
-      let current = 0;
+      let current = 0; // 浮動小数点で持つカードインデックス上の連続位置
 
       const layout = () => {
         cards.forEach((card, i) => {
-          // 中心からの符号付き距離を、ループの前後どちらが近いかで求める(例: 8枚中7番目なら-1扱い)
+          // 中心からの符号付き距離を、ループの前後どちらが近いかで求める(連続値のまま)
           let d = i - current;
-          if (d > count / 2) d -= count;
-          if (d < -count / 2) d += count;
+          d = ((d + count / 2) % count + count) % count - count / 2;
           const ad = Math.min(Math.abs(d), 3);
           card.style.setProperty('--d', d);
           card.style.setProperty('--ad', ad);
-          card.classList.toggle('is-center', d === 0);
-          card.classList.toggle('is-far', Math.abs(d) > 2);
+          card.classList.toggle('is-center', Math.abs(d) < 0.5);
+          card.classList.toggle('is-far', Math.abs(d) > 2.2);
         });
       };
       layout();
 
-      const goTo = (index) => {
-        current = ((index % count) + count) % count;
-        layout();
-      };
-
       cards.forEach((card, i) => {
-        card.addEventListener('click', () => { goTo(i); resetTimer(); });
+        card.addEventListener('click', () => { current = i; layout(); });
       });
 
-      let timer = null;
-      const ADVANCE_INTERVAL_MS = 3200;
-      function resetTimer() {
-        if (timer) clearInterval(timer);
-        if (prefersReducedMotion || count < 2) return;
-        timer = setInterval(() => goTo(current + 1), ADVANCE_INTERVAL_MS);
+      if (!prefersReducedMotion && count > 1) {
+        const CARDS_PER_SEC = 1 / 3.2; // 1枚送るのにだいたい3.2秒かける速さ
+        let lastTime = null;
+        const step = (timestamp) => {
+          if (lastTime === null) lastTime = timestamp;
+          const dt = timestamp - lastTime;
+          lastTime = timestamp;
+          current = (current + (CARDS_PER_SEC * dt) / 1000) % count;
+          layout();
+          window.requestAnimationFrame(step);
+        };
+        window.requestAnimationFrame(step);
       }
-      resetTimer();
     }
   }
 
