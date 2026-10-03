@@ -510,43 +510,52 @@ a { color: inherit; text-decoration: none; }
 }
 .btn-outline:hover { background: var(--cream); color: var(--espresso); }
 
-/* ---------- タップリスト(自動横スクロール) ---------- */
+/* ---------- タップリスト(アーチ状の自動カルーセル) ---------- */
 .gallery { padding-bottom: clamp(60px, 8vw, 100px); }
 .gallery .section-inner { text-align: center; margin-bottom: 44px; }
 
-.marquee {
-  overflow: hidden;
-  touch-action: pan-y;
-  cursor: grab;
-  user-select: none;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+.tap-carousel {
+  position: relative;
+  height: clamp(360px, 38vw, 500px);
 }
-.marquee.is-dragging { cursor: grabbing; }
-.marquee-track {
-  display: flex;
-  gap: 2px;
-  width: max-content;
-  padding: 0 clamp(20px, 5vw, 56px);
-  will-change: transform;
+.tap-carousel-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
-
-.tap-item {
-  flex: 0 0 clamp(240px, 32vw, 420px);
+/* 中央からの符号付き距離 --d / 絶対距離 --ad はJSが設定する。
+   中央(--d:0)はくっきり、両隣(|--d|:1)はぼかし・縮小・半透明でもやがかった待機状態、
+   それより外側(.is-far)は透明にして見えなくする */
+.tap-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(200px, 26vw, 340px);
   margin: 0;
+  cursor: pointer;
+  transition: transform 0.7s var(--ease), opacity 0.7s var(--ease), filter 0.7s var(--ease);
+  transform:
+    translate(-50%, -50%)
+    translateX(calc(var(--d) * 54%))
+    translateY(calc(var(--ad) * 32px))
+    rotate(calc(var(--d) * -7deg))
+    scale(calc(1 - var(--ad) * 0.17));
+  opacity: calc(1 - var(--ad) * 0.5);
+  filter: blur(calc(var(--ad) * 3px));
+  z-index: calc(10 - var(--ad));
 }
+.tap-card.is-center { cursor: default; }
+.tap-card.is-far { opacity: 0; pointer-events: none; }
+
 .tap-thumb {
   position: relative;
-  border-radius: 0;
   overflow: hidden;
   box-shadow: 0 24px 48px -20px rgba(0, 0, 0, 0.6);
-  transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
 }
 .tap-thumb::after {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: inherit;
   box-shadow: inset 0 0 0 1px rgba(244, 239, 228, 0.14);
   pointer-events: none;
 }
@@ -556,13 +565,7 @@ a { color: inherit; text-decoration: none; }
   aspect-ratio: 1 / 1;
   object-fit: cover;
   background: #ece7dd;
-  transition: transform 0.6s var(--ease);
 }
-.tap-item:hover .tap-thumb {
-  transform: translateY(-8px);
-  box-shadow: 0 30px 56px -18px rgba(0, 0, 0, 0.65);
-}
-.tap-item:hover .tap-thumb img { transform: scale(1.06); }
 .tap-thumb-scrim {
   position: absolute;
   inset: 0;
@@ -985,9 +988,9 @@ a { color: inherit; text-decoration: none; }
   .nav-cta { font-size: 0.68rem; padding: 8px 16px; }
   .eyebrow { font-size: 0.7rem; }
 
-  /* タップリストは少し小さくして、両サイドの隣のカードが見えるようにする */
-  .marquee-track { gap: 2px; padding: 0 12px; }
-  .tap-item { flex: 0 0 54vw; }
+  /* タップリストのカルーセルは少し小さくして、画面からはみ出さないようにする */
+  .tap-carousel { height: clamp(260px, 72vw, 340px); }
+  .tap-card { width: clamp(160px, 54vw, 220px); }
   .tap-name { font-size: 0.9rem; }
 
   .atmo-slideshow { height: clamp(420px, 68vh, 640px); }

@@ -204,7 +204,7 @@
   // タップリスト(現在提供中のビール)を microCMS から読み込んで描画する。
   // 内容を変えたいときは、microCMSの管理画面(タップリスト)でコンテンツを追加・編集・削除するだけでよい。
   const MICROCMS_TAP_ENDPOINT = 'taplist'; // microCMS管理画面のURL(/apis/taplist)で確認したエンドポイント名
-  const marqueeTrackEl = document.getElementById('marqueeTrack');
+  const tapCarouselTrackEl = document.getElementById('tapCarouselTrack');
   const fallbackTapItems = [
     { number: '01', name: 'Bread Crust', image: 'assets/tap/01.jpg' },
     { number: '02', name: 'American Wheat', image: 'assets/tap/02.jpg' },
@@ -217,10 +217,10 @@
   ];
 
   const renderTapList = (items) => {
-    if (!marqueeTrackEl) return;
-    marqueeTrackEl.innerHTML = items
-      .map((item) => `
-        <figure class="tap-item">
+    if (!tapCarouselTrackEl) return;
+    tapCarouselTrackEl.innerHTML = items
+      .map((item, i) => `
+        <figure class="tap-card" data-index="${i}">
           <div class="tap-thumb">
             <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy">
             <div class="tap-thumb-scrim" aria-hidden="true"></div>
@@ -248,7 +248,7 @@
     return items.filter((item) => item.image); // 画像未設定のものは表示しない
   };
 
-  if (marqueeTrackEl) {
+  if (tapCarouselTrackEl) {
     let tapItems = [];
     try {
       tapItems = await loadTapListFromMicroCms();
@@ -259,130 +259,52 @@
     renderTapList(tapItems.length ? tapItems : fallbackTapItems);
   }
 
-  // 横スクロールのマーケット(自動横スクロール):中身を複製してシームレスにループさせる。
-  // ネイティブの横スクロールには頼らず、track を transform: translateX() で直接動かす方式にする。
-  // (scrollLeftをJSで書き換える方式は、スマホの慣性スクロールと衝突して
-  //  自動スクロールが止まってしまう/操作できなくなることがあったため)
-  // タップリスト・店内の雰囲気など、複数のマーケットで使い回せるように関数化している。
-  const initAutoMarquee = (track) => {
-    const marqueeEl = track ? track.closest('.marquee') : null;
-    if (!track || !marqueeEl) return;
-    const items = Array.from(track.children);
-    items.forEach((item) => {
-      track.appendChild(item.cloneNode(true));
-    });
+  // タップリストのアーチ状カルーセル:中央の1枚だけくっきり映し、両隣はもやがかって
+  // (ぼかし・縮小・半透明で)待機しているように見せ、数秒ごとに自動で次へ送る。
+  // 各カードの位置はCSS変数 --d(中心からの符号付き距離)をJSから渡し、
+  // 見た目(ずらし方・ぼかし量など)はCSS側の計算式にまかせる。
+  const tapCarousel = document.getElementById('tapCarousel');
+  if (tapCarousel && tapCarouselTrackEl) {
+    const cards = Array.from(tapCarouselTrackEl.children);
+    const count = cards.length;
 
-    // ループ1周分の距離は「複製後の先頭アイテム」の位置と「本来の先頭アイテム」の位置の差で正確に測る。
-    // track.scrollWidth / 2 は左右の余白(padding)がループの継ぎ目に対して非対称なため、
-    // 実際の1周の距離とわずかにズレてしまい、そのズレが周回のたびに蓄積して
-    // 最終的に画面が中身のない位置を映してしまう(何も表示されなくなる)不具合の原因だった。
-    let period = 0;
-    const recalc = () => {
-      const firstClone = track.children[items.length];
-      period = firstClone ? firstClone.offsetLeft - track.children[0].offsetLeft : 0;
-    };
-    recalc();
-    window.addEventListener('resize', recalc, { passive: true });
-    // 画像の読み込みが遅れて幅が後から変わるケース(主にスマホの回線)にも追従する
-    track.querySelectorAll('img').forEach((img) => {
-      if (!img.complete) img.addEventListener('load', recalc, { once: true });
-    });
+    if (count > 0) {
+      let current = 0;
 
-    let offset = 0; // translateXに渡す値(0以下で左方向に進む)
-    const wrapOffset = () => {
-      if (period <= 0) return;
-      while (offset <= -period) offset += period;
-      while (offset > 0) offset -= period;
-    };
-    const applyTransform = () => {
-      track.style.transform = `translateX(${offset}px)`;
-    };
-
-    let paused = false;
-    let resumeTimer = null;
-    const pause = () => {
-      paused = true;
-      if (resumeTimer) clearTimeout(resumeTimer);
-    };
-    const scheduleResume = () => {
-      if (resumeTimer) clearTimeout(resumeTimer);
-      resumeTimer = setTimeout(() => { paused = false; }, 1200);
-    };
-
-    // 指(タッチ)・マウスのドラッグで直接動かせるようにする
-    let dragging = false;
-    let dragStartX = 0;
-    let dragStartOffset = 0;
-    const getClientX = (e) => (e.touches ? e.touches[0].clientX : e.clientX);
-    const dragStart = (e) => {
-      dragging = true;
-      pause();
-      dragStartX = getClientX(e);
-      dragStartOffset = offset;
-      marqueeEl.classList.add('is-dragging');
-    };
-    const dragMove = (e) => {
-      if (!dragging) return;
-      offset = dragStartOffset + (getClientX(e) - dragStartX);
-      wrapOffset();
-      applyTransform();
-    };
-    const dragEnd = () => {
-      if (!dragging) return;
-      dragging = false;
-      marqueeEl.classList.remove('is-dragging');
-      scheduleResume();
-    };
-
-    marqueeEl.addEventListener('touchstart', dragStart, { passive: true });
-    marqueeEl.addEventListener('touchmove', dragMove, { passive: true });
-    marqueeEl.addEventListener('touchend', dragEnd, { passive: true });
-    marqueeEl.addEventListener('touchcancel', dragEnd, { passive: true });
-    marqueeEl.addEventListener('mousedown', (e) => { dragStart(e); e.preventDefault(); });
-    window.addEventListener('mousemove', dragMove);
-    window.addEventListener('mouseup', dragEnd);
-
-    // トラックパッド等の横方向ホイール操作にも反応させる
-    marqueeEl.addEventListener('wheel', (e) => {
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-        e.preventDefault();
-        offset -= e.deltaX;
-        wrapOffset();
-        applyTransform();
-      }
-      pause();
-      scheduleResume();
-    }, { passive: false });
-
-    // ホバー(マウス)操作ができる端末でだけ、マウスが乗っている間止める。
-    // スマホ(タッチ)ではmouseenterだけ発火してmouseleaveが来ず、
-    // 自動スクロールが止まったまま戻らなくなる不具合があったため、実マウス限定にする
-    const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    if (supportsHover) {
-      marqueeEl.addEventListener('mouseenter', pause);
-      marqueeEl.addEventListener('mouseleave', () => { if (!dragging) scheduleResume(); });
-    }
-
-    if (!prefersReducedMotion) {
-      const SPEED_PX_PER_SEC = 55;
-      let lastTime = null;
-      const step = (timestamp) => {
-        if (lastTime === null) lastTime = timestamp;
-        const dt = timestamp - lastTime;
-        lastTime = timestamp;
-
-        if (!paused && !dragging && period > 0) {
-          offset -= (SPEED_PX_PER_SEC * dt) / 1000;
-          wrapOffset();
-          applyTransform();
-        }
-        window.requestAnimationFrame(step);
+      const layout = () => {
+        cards.forEach((card, i) => {
+          // 中心からの符号付き距離を、ループの前後どちらが近いかで求める(例: 8枚中7番目なら-1扱い)
+          let d = i - current;
+          if (d > count / 2) d -= count;
+          if (d < -count / 2) d += count;
+          const ad = Math.min(Math.abs(d), 2);
+          card.style.setProperty('--d', d);
+          card.style.setProperty('--ad', ad);
+          card.classList.toggle('is-center', d === 0);
+          card.classList.toggle('is-far', Math.abs(d) > 1);
+        });
       };
-      window.requestAnimationFrame(step);
-    }
-  };
+      layout();
 
-  initAutoMarquee(document.getElementById('marqueeTrack'));
+      const goTo = (index) => {
+        current = ((index % count) + count) % count;
+        layout();
+      };
+
+      cards.forEach((card, i) => {
+        card.addEventListener('click', () => { goTo(i); resetTimer(); });
+      });
+
+      let timer = null;
+      const ADVANCE_INTERVAL_MS = 3200;
+      function resetTimer() {
+        if (timer) clearInterval(timer);
+        if (prefersReducedMotion || count < 2) return;
+        timer = setInterval(() => goTo(current + 1), ADVANCE_INTERVAL_MS);
+      }
+      resetTimer();
+    }
+  }
 
   // 店内の雰囲気:フルブリードのスライドショー。数秒ごとに自動で次の写真に切り替わる
   // (upcycle-beer.comのトップページと同じ構成)。下部のドットで手動切り替えもできる。
