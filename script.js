@@ -221,8 +221,11 @@
     marqueeTrackEl.innerHTML = items
       .map((item) => `
         <figure class="tap-item">
-          <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy">
-          <figcaption><span class="tap-num">${escapeHtml(item.number)}</span><span class="tap-name">${escapeHtml(item.name)}</span></figcaption>
+          <div class="tap-thumb">
+            <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy">
+            <div class="tap-thumb-scrim" aria-hidden="true"></div>
+            <figcaption class="tap-caption"><span class="tap-num">${escapeHtml(item.number)}</span><span class="tap-name">${escapeHtml(item.name)}</span></figcaption>
+          </div>
         </figure>
       `)
       .join('');
