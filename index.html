@@ -33,8 +33,8 @@
     </a>
     <div class="nav-right">
       <nav class="nav-links">
-        <a href="#gallery">Tap List</a>
         <a href="#atmosphere">Atmosphere</a>
+        <a href="#gallery">Tap List</a>
         <a href="#news">News</a>
         <a href="#calendar">Calendar</a>
         <a href="#concept">Concept</a>
@@ -53,7 +53,7 @@
 <div class="calendar-page-overlay" id="calendarOverlay" hidden>
   <div class="calendar-page-panel">
     <button type="button" class="calendar-page-close" id="calendarOverlayClose" aria-label="閉じる">×</button>
-    <p class="eyebrow">04 — Events</p>
+    <p class="eyebrow">03 — Events</p>
     <h2 class="section-title">Calendar</h2>
 
     <div class="calendar-wrap">
@@ -94,10 +94,21 @@
         </div>
       </div>
     </div>
-    <a href="#gallery" class="scroll-cue" aria-label="スクロールして続きを見る">
+    <a href="#atmosphere" class="scroll-cue" aria-label="スクロールして続きを見る">
       <span class="scroll-cue-line"></span>
       <span class="scroll-cue-text">SCROLL</span>
     </a>
+  </section>
+
+  <!-- 店内の雰囲気(フルブリードのスライドショー。数秒ごとに自動で切り替わる、upcycle-beer.comのトップと同じ構成)。
+       タップリストと同じく、写真はmicroCMSの「Atmosphere」から読み込む。
+       microCMS未設定・取得失敗時は script.js 側の仮グラデーションで表示を保つ -->
+  <section class="atmosphere" id="atmosphere">
+    <div class="atmo-slideshow" id="atmoSlideshow">
+      <div class="atmo-slides" id="atmoSlides" aria-hidden="true"></div>
+      <div class="atmo-slideshow-scrim" aria-hidden="true"></div>
+      <div class="atmo-dots" id="atmoDots"></div>
+    </div>
   </section>
 
   <!-- タップリスト(自動横スクロール) -->
@@ -111,17 +122,6 @@
       <div class="marquee-track" id="marqueeTrack"></div>
     </div>
   </section>
-
-  <!-- 店内の雰囲気(フルブリードのスライドショー。数秒ごとに自動で切り替わる、upcycle-beer.comのトップと同じ構成)。
-       タップリストと同じく、写真はmicroCMSの「Atmosphere」から読み込む。
-       microCMS未設定・取得失敗時は script.js 側の仮グラデーションで表示を保つ -->
-  <section class="atmosphere" id="atmosphere">
-    <div class="atmo-slideshow" id="atmoSlideshow">
-      <div class="atmo-slides" id="atmoSlides" aria-hidden="true"></div>
-      <div class="atmo-slideshow-scrim" aria-hidden="true"></div>
-      <div class="atmo-dots" id="atmoDots"></div>
-    </div>
-  </section>
 </div>
 
 <main>
@@ -129,7 +129,7 @@
   <!-- 最新情報 -->
   <section class="section news" id="news">
     <div class="section-inner">
-      <p class="eyebrow reveal-on-scroll">03 — News</p>
+      <p class="eyebrow reveal-on-scroll">02 — News</p>
       <h2 class="section-title reveal-on-scroll">Topics</h2>
 
       <div class="news-grid" id="newsGrid"></div>
@@ -139,7 +139,7 @@
   <!-- コンセプト -->
   <section class="section concept" id="concept">
     <div class="section-inner">
-      <p class="eyebrow reveal-on-scroll">05 — Concept</p>
+      <p class="eyebrow reveal-on-scroll">04 — Concept</p>
       <h2 class="section-title reveal-on-scroll">わたしたちが紡ぐ未来</h2>
       <p class="section-text reveal-on-scroll">
         わたしたちは長きにわたり、「たくさんの人においしいパンを届けたい」との想いでベーカリーとしてものづくりにたずさわってきました。
@@ -188,7 +188,7 @@
   <!-- プロダクト -->
   <section class="section products" id="products">
     <div class="section-inner">
-      <p class="eyebrow reveal-on-scroll">06 — Products</p>
+      <p class="eyebrow reveal-on-scroll">05 — Products</p>
       <h2 class="section-title reveal-on-scroll">Featured Items</h2>
 
       <div class="product-grid">
@@ -221,7 +221,7 @@
   <!-- コンタクト -->
   <section class="section contact" id="contact">
     <div class="section-inner narrow">
-      <p class="eyebrow reveal-on-scroll">07 — Contact</p>
+      <p class="eyebrow reveal-on-scroll">06 — Contact</p>
       <h2 class="section-title reveal-on-scroll">Get in Touch</h2>
       <p class="section-text reveal-on-scroll">
         ご質問・オーダーメイドのご相談などお気軽にどうぞ。
