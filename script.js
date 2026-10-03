@@ -256,13 +256,14 @@
     renderTapList(tapItems.length ? tapItems : fallbackTapItems);
   }
 
-  // タップリストの自動横スクロール:中身を複製してシームレスにループさせる。
+  // 横スクロールのマーケット(自動横スクロール):中身を複製してシームレスにループさせる。
   // ネイティブの横スクロールには頼らず、track を transform: translateX() で直接動かす方式にする。
   // (scrollLeftをJSで書き換える方式は、スマホの慣性スクロールと衝突して
   //  自動スクロールが止まってしまう/操作できなくなることがあったため)
-  const track = document.getElementById('marqueeTrack');
-  const marqueeEl = document.querySelector('.marquee');
-  if (track && marqueeEl) {
+  // タップリスト・店内の雰囲気など、複数のマーケットで使い回せるように関数化している。
+  const initAutoMarquee = (track) => {
+    const marqueeEl = track ? track.closest('.marquee') : null;
+    if (!track || !marqueeEl) return;
     const items = Array.from(track.children);
     items.forEach((item) => {
       track.appendChild(item.cloneNode(true));
@@ -376,7 +377,10 @@
       };
       window.requestAnimationFrame(step);
     }
-  }
+  };
+
+  initAutoMarquee(document.getElementById('marqueeTrack'));
+  initAutoMarquee(document.getElementById('atmosphereTrack'));
 
   // カレンダー(Events):microCMSの「events」から出店・イベント予定を読み込んで
   // 月表示カレンダー + 直近の予定リストを描画する

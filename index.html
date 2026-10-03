@@ -6,8 +6,8 @@
 <title>Third Grain | Better life with upcycle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Shippori+Mincho:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261001">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=20261003">
 </head>
 <body>
 
@@ -34,6 +34,7 @@
     <div class="nav-right">
       <nav class="nav-links">
         <a href="#gallery">Tap List</a>
+        <a href="#atmosphere">Atmosphere</a>
         <a href="#news">News</a>
         <a href="#calendar">Calendar</a>
         <a href="#concept">Concept</a>
@@ -52,7 +53,7 @@
 <div class="calendar-page-overlay" id="calendarOverlay" hidden>
   <div class="calendar-page-panel">
     <button type="button" class="calendar-page-close" id="calendarOverlayClose" aria-label="閉じる">×</button>
-    <p class="eyebrow">03 — Events</p>
+    <p class="eyebrow">04 — Events</p>
     <h2 class="section-title">Calendar</h2>
 
     <div class="calendar-wrap">
@@ -110,6 +111,45 @@
       <div class="marquee-track" id="marqueeTrack"></div>
     </div>
   </section>
+
+  <!-- 店内の雰囲気(自動横スクロール)。
+       写真はまだ仮のプレースホルダー。実写に差し替えるときは、
+       assets/atmosphere/ に写真を置いて、各 .atmo-thumb を
+       <img src="assets/atmosphere/xxx.jpg" alt="..."> に置き換える -->
+  <section class="section atmosphere" id="atmosphere">
+    <div class="section-inner">
+      <p class="eyebrow reveal-on-scroll light">02 — Atmosphere</p>
+      <h2 class="section-title light reveal-on-scroll">Inside Third Grain</h2>
+    </div>
+    <div class="marquee">
+      <div class="marquee-track" id="atmosphereTrack">
+        <figure class="atmo-item">
+          <div class="atmo-thumb atmo-a"></div>
+          <figcaption class="atmo-caption">店内</figcaption>
+        </figure>
+        <figure class="atmo-item">
+          <div class="atmo-thumb atmo-b"></div>
+          <figcaption class="atmo-caption">カウンター</figcaption>
+        </figure>
+        <figure class="atmo-item">
+          <div class="atmo-thumb atmo-c"></div>
+          <figcaption class="atmo-caption">醸造タンク</figcaption>
+        </figure>
+        <figure class="atmo-item">
+          <div class="atmo-thumb atmo-d"></div>
+          <figcaption class="atmo-caption">グラスの一杯</figcaption>
+        </figure>
+        <figure class="atmo-item">
+          <div class="atmo-thumb atmo-e"></div>
+          <figcaption class="atmo-caption">外観</figcaption>
+        </figure>
+        <figure class="atmo-item">
+          <div class="atmo-thumb atmo-f"></div>
+          <figcaption class="atmo-caption">くつろぎの時間</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
 </div>
 
 <main>
@@ -117,7 +157,7 @@
   <!-- 最新情報 -->
   <section class="section news" id="news">
     <div class="section-inner">
-      <p class="eyebrow reveal-on-scroll">02 — News</p>
+      <p class="eyebrow reveal-on-scroll">03 — News</p>
       <h2 class="section-title reveal-on-scroll">Topics</h2>
 
       <div class="news-grid" id="newsGrid"></div>
@@ -127,7 +167,7 @@
   <!-- コンセプト -->
   <section class="section concept" id="concept">
     <div class="section-inner">
-      <p class="eyebrow reveal-on-scroll">04 — Concept</p>
+      <p class="eyebrow reveal-on-scroll">05 — Concept</p>
       <h2 class="section-title reveal-on-scroll">わたしたちが紡ぐ未来</h2>
       <p class="section-text reveal-on-scroll">
         わたしたちは長きにわたり、「たくさんの人においしいパンを届けたい」との想いでベーカリーとしてものづくりにたずさわってきました。
@@ -176,7 +216,7 @@
   <!-- プロダクト -->
   <section class="section products" id="products">
     <div class="section-inner">
-      <p class="eyebrow reveal-on-scroll">05 — Products</p>
+      <p class="eyebrow reveal-on-scroll">06 — Products</p>
       <h2 class="section-title reveal-on-scroll">Featured Items</h2>
 
       <div class="product-grid">
@@ -209,7 +249,7 @@
   <!-- コンタクト -->
   <section class="section contact" id="contact">
     <div class="section-inner narrow">
-      <p class="eyebrow reveal-on-scroll">06 — Contact</p>
+      <p class="eyebrow reveal-on-scroll">07 — Contact</p>
       <h2 class="section-title reveal-on-scroll">Get in Touch</h2>
       <p class="section-text reveal-on-scroll">
         ご質問・オーダーメイドのご相談などお気軽にどうぞ。
