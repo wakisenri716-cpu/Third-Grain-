@@ -595,19 +595,6 @@ a { color: inherit; text-decoration: none; }
   background: linear-gradient(180deg, rgba(20, 16, 12, 0.35), rgba(20, 16, 12, 0.05) 45%, rgba(20, 16, 12, 0.55));
   pointer-events: none;
 }
-.atmo-slideshow-content {
-  position: absolute;
-  left: clamp(20px, 6vw, 72px);
-  bottom: clamp(56px, 9vw, 96px);
-  z-index: 2;
-  text-align: left;
-}
-.atmo-slideshow-content .eyebrow,
-.atmo-slideshow-content .section-title {
-  margin: 0;
-}
-.atmo-slideshow-content .section-title { margin-top: 8px; }
-
 .atmo-dots {
   position: absolute;
   left: 50%;
