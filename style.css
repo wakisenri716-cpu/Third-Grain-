@@ -581,13 +581,6 @@ a { color: inherit; text-decoration: none; }
   transition: opacity 1.4s var(--ease);
 }
 .atmo-slide.is-active { opacity: 1; }
-/* 実写が未入稿のあいだの仮表示。実写に差し替えるときは background-image: url('assets/atmosphere/xxx.jpg') に変える */
-.atmo-a { background-image: linear-gradient(140deg, #ab7f4e, #7a5a37); }
-.atmo-b { background-image: linear-gradient(140deg, #6d7a55, #4c5539); }
-.atmo-c { background-image: linear-gradient(140deg, #8a8570, #63604f); }
-.atmo-d { background-image: linear-gradient(140deg, #c79f6c, #ab7f4e); }
-.atmo-e { background-image: linear-gradient(140deg, #7a5a37, #4c5539); }
-.atmo-f { background-image: linear-gradient(140deg, #9c8a63, #6d7a55); }
 
 .atmo-slideshow-scrim {
   position: absolute;

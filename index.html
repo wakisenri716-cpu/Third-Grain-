@@ -113,19 +113,12 @@
   </section>
 
   <!-- 店内の雰囲気(フルブリードのスライドショー。数秒ごとに自動で切り替わる、upcycle-beer.comのトップと同じ構成)。
-       写真はまだ仮のプレースホルダー。実写に差し替えるときは、
-       assets/atmosphere/ に写真を置いて、各 .atmo-slide の
-       background: linear-gradient(...) を
-       background-image: url('assets/atmosphere/xxx.jpg') に置き換える -->
+       タップリストと同じく、写真はmicroCMSの「Atmosphere」から読み込む。
+       microCMS未設定・取得失敗時は script.js 側の仮グラデーションで表示を保つ -->
   <section class="atmosphere" id="atmosphere">
     <div class="atmo-slideshow" id="atmoSlideshow">
-      <div class="atmo-slide atmo-a is-active"></div>
-      <div class="atmo-slide atmo-b"></div>
-      <div class="atmo-slide atmo-c"></div>
-      <div class="atmo-slide atmo-d"></div>
-      <div class="atmo-slide atmo-e"></div>
-      <div class="atmo-slide atmo-f"></div>
-      <div class="atmo-slideshow-scrim"></div>
+      <div class="atmo-slides" id="atmoSlides" aria-hidden="true"></div>
+      <div class="atmo-slideshow-scrim" aria-hidden="true"></div>
       <div class="atmo-dots" id="atmoDots"></div>
     </div>
   </section>

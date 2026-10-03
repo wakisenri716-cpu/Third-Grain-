@@ -383,14 +383,56 @@
 
   // 店内の雰囲気:フルブリードのスライドショー。数秒ごとに自動で次の写真に切り替わる
   // (upcycle-beer.comのトップページと同じ構成)。下部のドットで手動切り替えもできる。
+  // タップリストと同じく、写真はmicroCMSの「atmosphere」から読み込む。
+  // 内容を変えたいときは、microCMSの管理画面(Atmosphere)で画像を追加・入れ替え・削除するだけでよい。
+  const MICROCMS_ATMOSPHERE_ENDPOINT = 'atmosphere'; // microCMS管理画面のURL(/apis/atmosphere)で確認したエンドポイント名
+  const fallbackAtmoBackgrounds = [
+    'linear-gradient(140deg, #ab7f4e, #7a5a37)',
+    'linear-gradient(140deg, #6d7a55, #4c5539)',
+    'linear-gradient(140deg, #8a8570, #63604f)',
+    'linear-gradient(140deg, #c79f6c, #ab7f4e)',
+    'linear-gradient(140deg, #7a5a37, #4c5539)',
+    'linear-gradient(140deg, #9c8a63, #6d7a55)',
+  ];
+
+  const loadAtmosphereFromMicroCms = async () => {
+    const url = `https://${MICROCMS_SERVICE}.microcms.io/api/v1/${MICROCMS_ATMOSPHERE_ENDPOINT}?limit=20`;
+    const res = await fetch(url, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } });
+    if (!res.ok) throw new Error(`atmosphere fetch failed: ${res.status}`);
+    const data = await res.json();
+    const items = Array.isArray(data.contents) ? data.contents : [];
+    return items.map((c) => (c.image && c.image.url) || '').filter(Boolean);
+  };
+
   const atmoSlideshow = document.getElementById('atmoSlideshow');
   if (atmoSlideshow) {
-    const slides = Array.from(atmoSlideshow.querySelectorAll('.atmo-slide'));
+    const slidesEl = document.getElementById('atmoSlides');
     const dotsWrap = document.getElementById('atmoDots');
-    let current = Math.max(slides.findIndex((s) => s.classList.contains('is-active')), 0);
+
+    let images = [];
+    try {
+      images = await loadAtmosphereFromMicroCms();
+    } catch (err) {
+      // microCMSに未設定・接続エラーの場合は埋め込みのダミーで表示を保つ
+      images = [];
+    }
+    const backgrounds = images.length
+      ? images.map((imageUrl) => `url('${imageUrl}')`)
+      : fallbackAtmoBackgrounds;
+
+    slidesEl.innerHTML = '';
+    backgrounds.forEach((bg, i) => {
+      const slide = document.createElement('div');
+      slide.className = 'atmo-slide' + (i === 0 ? ' is-active' : '');
+      // URLに特殊文字が含まれていてもHTMLとしては解釈されない(属性文字列ではなくCSSOM経由で設定するため安全)
+      slide.style.backgroundImage = bg;
+      slidesEl.appendChild(slide);
+    });
+    const slides = Array.from(slidesEl.children);
+    let current = 0;
 
     dotsWrap.innerHTML = slides
-      .map((_, i) => `<button type="button" class="atmo-dot${i === current ? ' is-active' : ''}" aria-label="${i + 1}枚目の写真を表示"></button>`)
+      .map((_, i) => `<button type="button" class="atmo-dot${i === 0 ? ' is-active' : ''}" aria-label="${i + 1}枚目の写真を表示"></button>`)
       .join('');
     const dots = Array.from(dotsWrap.children);
 
@@ -406,7 +448,7 @@
     const SLIDE_INTERVAL_MS = 4500;
     const resetTimer = () => {
       if (timer) clearInterval(timer);
-      if (prefersReducedMotion) return;
+      if (prefersReducedMotion || slides.length < 2) return;
       timer = setInterval(() => goTo(current + 1), SLIDE_INTERVAL_MS);
     };
 
