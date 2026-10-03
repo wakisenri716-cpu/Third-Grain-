@@ -277,11 +277,11 @@
           let d = i - current;
           if (d > count / 2) d -= count;
           if (d < -count / 2) d += count;
-          const ad = Math.min(Math.abs(d), 2);
+          const ad = Math.min(Math.abs(d), 3);
           card.style.setProperty('--d', d);
           card.style.setProperty('--ad', ad);
           card.classList.toggle('is-center', d === 0);
-          card.classList.toggle('is-far', Math.abs(d) > 1);
+          card.classList.toggle('is-far', Math.abs(d) > 2);
         });
       };
       layout();
