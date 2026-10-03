@@ -569,15 +569,16 @@ a { color: inherit; text-decoration: none; }
 .atmo-slideshow {
   position: relative;
   width: 100%;
-  height: clamp(420px, 70vh, 760px);
+  /* 画面いっぱいに写真を映しつつ、最初のcover版より縦を長めにして
+     クロップ量を元写真の比率寄りに近づけた、中間くらいの箱の形 */
+  height: clamp(560px, 82vh, 920px);
   overflow: hidden;
 }
 .atmo-slide {
   position: absolute;
   inset: 0;
   background-color: var(--espresso);
-  background-size: contain;
-  background-repeat: no-repeat;
+  background-size: cover;
   background-position: center;
   opacity: 0;
   transition: opacity 1.4s var(--ease);
@@ -963,7 +964,7 @@ a { color: inherit; text-decoration: none; }
   .tap-item { flex: 0 0 54vw; }
   .tap-name { font-size: 0.9rem; }
 
-  .atmo-slideshow { height: clamp(320px, 56vh, 520px); }
+  .atmo-slideshow { height: clamp(420px, 68vh, 640px); }
 
   /* カレンダー */
   .calendar-day { font-size: 0.72rem; min-height: 56px; padding: 6px 2px; }
