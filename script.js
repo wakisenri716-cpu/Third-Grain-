@@ -401,7 +401,7 @@
     if (!res.ok) throw new Error(`atmosphere fetch failed: ${res.status}`);
     const data = await res.json();
     const items = Array.isArray(data.contents) ? data.contents : [];
-    return items.map((c) => (c.image && c.image.url) || '').filter(Boolean);
+    return items.map((c) => (c.picture && c.picture.url) || '').filter(Boolean);
   };
 
   const atmoSlideshow = document.getElementById('atmoSlideshow');
