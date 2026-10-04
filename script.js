@@ -178,7 +178,7 @@
   }
 
   // グリッド/リスト内の要素は少しずつ時間差で現れるようにする(News は描画時に設定済み)
-  const staggerGroups = document.querySelectorAll('.concept-blocks, .product-grid');
+  const staggerGroups = document.querySelectorAll('.concept-blocks');
   staggerGroups.forEach((group) => {
     Array.from(group.children).forEach((child, i) => {
       child.style.setProperty('--reveal-delay', `${Math.min(i * 90, 360)}ms`);
@@ -204,7 +204,7 @@
   // タップリスト(現在提供中のビール)を microCMS から読み込んで描画する。
   // 内容を変えたいときは、microCMSの管理画面(タップリスト)でコンテンツを追加・編集・削除するだけでよい。
   const MICROCMS_TAP_ENDPOINT = 'taplist'; // microCMS管理画面のURL(/apis/taplist)で確認したエンドポイント名
-  const tapCarouselTrackEl = document.getElementById('tapCarouselTrack');
+  const marqueeTrackEl = document.getElementById('marqueeTrack');
   const fallbackTapItems = [
     { number: '01', name: 'Bread Crust', image: 'assets/tap/01.jpg' },
     { number: '02', name: 'American Wheat', image: 'assets/tap/02.jpg' },
@@ -217,10 +217,10 @@
   ];
 
   const renderTapList = (items) => {
-    if (!tapCarouselTrackEl) return;
-    tapCarouselTrackEl.innerHTML = items
-      .map((item, i) => `
-        <figure class="tap-card" data-index="${i}">
+    if (!marqueeTrackEl) return;
+    marqueeTrackEl.innerHTML = items
+      .map((item) => `
+        <figure class="tap-item">
           <div class="tap-thumb">
             <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy">
             <div class="tap-thumb-scrim" aria-hidden="true"></div>
@@ -248,7 +248,7 @@
     return items.filter((item) => item.image); // 画像未設定のものは表示しない
   };
 
-  if (tapCarouselTrackEl) {
+  if (marqueeTrackEl) {
     let tapItems = [];
     try {
       tapItems = await loadTapListFromMicroCms();
@@ -259,51 +259,129 @@
     renderTapList(tapItems.length ? tapItems : fallbackTapItems);
   }
 
-  // タップリストのアーチ状カルーセル:中央の1枚がいちばん大きく、離れるほど小さく
-  // 半透明になっていく(写真そのものは加工しない)。index を1枚ずつ飛ばすのではなく、
-  // 位置を連続値(current)としてrequestAnimationFrameで毎フレーム少しずつ進めることで、
-  // 最初の自動横スクロールと同じようになめらかに流れ続けるようにしている。
-  const tapCarousel = document.getElementById('tapCarousel');
-  if (tapCarousel && tapCarouselTrackEl) {
-    const cards = Array.from(tapCarouselTrackEl.children);
-    const count = cards.length;
+  // 横スクロールのマーケット(自動横スクロール):中身を複製してシームレスにループさせる。
+  // ネイティブの横スクロールには頼らず、track を transform: translateX() で直接動かす方式にする。
+  // (scrollLeftをJSで書き換える方式は、スマホの慣性スクロールと衝突して
+  //  自動スクロールが止まってしまう/操作できなくなることがあったため)
+  const initAutoMarquee = (track) => {
+    const marqueeEl = track ? track.closest('.marquee') : null;
+    if (!track || !marqueeEl) return;
+    const items = Array.from(track.children);
+    items.forEach((item) => {
+      track.appendChild(item.cloneNode(true));
+    });
 
-    if (count > 0) {
-      let current = 0; // 浮動小数点で持つカードインデックス上の連続位置
+    // ループ1周分の距離は「複製後の先頭アイテム」の位置と「本来の先頭アイテム」の位置の差で正確に測る。
+    // track.scrollWidth / 2 は左右の余白(padding)がループの継ぎ目に対して非対称なため、
+    // 実際の1周の距離とわずかにズレてしまい、そのズレが周回のたびに蓄積して
+    // 最終的に画面が中身のない位置を映してしまう(何も表示されなくなる)不具合の原因だった。
+    let period = 0;
+    const recalc = () => {
+      const firstClone = track.children[items.length];
+      period = firstClone ? firstClone.offsetLeft - track.children[0].offsetLeft : 0;
+    };
+    recalc();
+    window.addEventListener('resize', recalc, { passive: true });
+    // 画像の読み込みが遅れて幅が後から変わるケース(主にスマホの回線)にも追従する
+    track.querySelectorAll('img').forEach((img) => {
+      if (!img.complete) img.addEventListener('load', recalc, { once: true });
+    });
 
-      const layout = () => {
-        cards.forEach((card, i) => {
-          // 中心からの符号付き距離を、ループの前後どちらが近いかで求める(連続値のまま)
-          let d = i - current;
-          d = ((d + count / 2) % count + count) % count - count / 2;
-          const ad = Math.min(Math.abs(d), 3);
-          card.style.setProperty('--d', d);
-          card.style.setProperty('--ad', ad);
-          card.classList.toggle('is-center', Math.abs(d) < 0.5);
-          card.classList.toggle('is-far', Math.abs(d) > 2.2);
-        });
-      };
-      layout();
+    let offset = 0; // translateXに渡す値(0以下で左方向に進む)
+    const wrapOffset = () => {
+      if (period <= 0) return;
+      while (offset <= -period) offset += period;
+      while (offset > 0) offset -= period;
+    };
+    const applyTransform = () => {
+      track.style.transform = `translateX(${offset}px)`;
+    };
 
-      cards.forEach((card, i) => {
-        card.addEventListener('click', () => { current = i; layout(); });
-      });
+    let paused = false;
+    let resumeTimer = null;
+    const pause = () => {
+      paused = true;
+      if (resumeTimer) clearTimeout(resumeTimer);
+    };
+    const scheduleResume = () => {
+      if (resumeTimer) clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(() => { paused = false; }, 1200);
+    };
 
-      if (!prefersReducedMotion && count > 1) {
-        const CARDS_PER_SEC = 1 / 3.2; // 1枚送るのにだいたい3.2秒かける速さ
-        let lastTime = null;
-        const step = (timestamp) => {
-          if (lastTime === null) lastTime = timestamp;
-          const dt = timestamp - lastTime;
-          lastTime = timestamp;
-          current = (current + (CARDS_PER_SEC * dt) / 1000) % count;
-          layout();
-          window.requestAnimationFrame(step);
-        };
-        window.requestAnimationFrame(step);
+    // 指(タッチ)・マウスのドラッグで直接動かせるようにする
+    let dragging = false;
+    let dragStartX = 0;
+    let dragStartOffset = 0;
+    const getClientX = (e) => (e.touches ? e.touches[0].clientX : e.clientX);
+    const dragStart = (e) => {
+      dragging = true;
+      pause();
+      dragStartX = getClientX(e);
+      dragStartOffset = offset;
+      marqueeEl.classList.add('is-dragging');
+    };
+    const dragMove = (e) => {
+      if (!dragging) return;
+      offset = dragStartOffset + (getClientX(e) - dragStartX);
+      wrapOffset();
+      applyTransform();
+    };
+    const dragEnd = () => {
+      if (!dragging) return;
+      dragging = false;
+      marqueeEl.classList.remove('is-dragging');
+      scheduleResume();
+    };
+
+    marqueeEl.addEventListener('touchstart', dragStart, { passive: true });
+    marqueeEl.addEventListener('touchmove', dragMove, { passive: true });
+    marqueeEl.addEventListener('touchend', dragEnd, { passive: true });
+    marqueeEl.addEventListener('touchcancel', dragEnd, { passive: true });
+    marqueeEl.addEventListener('mousedown', (e) => { dragStart(e); e.preventDefault(); });
+    window.addEventListener('mousemove', dragMove);
+    window.addEventListener('mouseup', dragEnd);
+
+    // トラックパッド等の横方向ホイール操作にも反応させる
+    marqueeEl.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+        e.preventDefault();
+        offset -= e.deltaX;
+        wrapOffset();
+        applyTransform();
       }
+      pause();
+      scheduleResume();
+    }, { passive: false });
+
+    // ホバー(マウス)操作ができる端末でだけ、マウスが乗っている間止める。
+    // スマホ(タッチ)ではmouseenterだけ発火してmouseleaveが来ず、
+    // 自動スクロールが止まったまま戻らなくなる不具合があったため、実マウス限定にする
+    const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (supportsHover) {
+      marqueeEl.addEventListener('mouseenter', pause);
+      marqueeEl.addEventListener('mouseleave', () => { if (!dragging) scheduleResume(); });
     }
-  }
+
+    if (!prefersReducedMotion) {
+      const SPEED_PX_PER_SEC = 55;
+      let lastTime = null;
+      const step = (timestamp) => {
+        if (lastTime === null) lastTime = timestamp;
+        const dt = timestamp - lastTime;
+        lastTime = timestamp;
+
+        if (!paused && !dragging && period > 0) {
+          offset -= (SPEED_PX_PER_SEC * dt) / 1000;
+          wrapOffset();
+          applyTransform();
+        }
+        window.requestAnimationFrame(step);
+      };
+      window.requestAnimationFrame(step);
+    }
+  };
+
+  initAutoMarquee(document.getElementById('marqueeTrack'));
 
   // 店内の雰囲気:フルブリードのスライドショー。数秒ごとに自動で次の写真に切り替わる
   // (upcycle-beer.comのトップページと同じ構成)。下部のドットで手動切り替えもできる。
