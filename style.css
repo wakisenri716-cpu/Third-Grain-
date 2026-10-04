@@ -478,7 +478,7 @@ a { color: inherit; text-decoration: none; }
 .marquee.is-dragging { cursor: grabbing; }
 .marquee-track {
   display: flex;
-  gap: 2px;
+  gap: 0;
   width: max-content;
   padding: 0 clamp(20px, 5vw, 56px);
   will-change: transform;
@@ -923,7 +923,7 @@ a { color: inherit; text-decoration: none; }
   .eyebrow { font-size: 0.7rem; }
 
   /* タップリストは少し小さくして、両サイドの隣のカードが見えるようにする */
-  .marquee-track { gap: 2px; padding: 0 12px; }
+  .marquee-track { gap: 0; padding: 0 12px; }
   .tap-item { flex: 0 0 54vw; }
 
   .atmo-slideshow { height: clamp(420px, 68vh, 640px); }
