@@ -223,7 +223,6 @@
         <figure class="tap-item">
           <div class="tap-thumb">
             <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy">
-            <figcaption class="tap-caption"><span class="tap-num">${escapeHtml(item.number)}</span></figcaption>
           </div>
         </figure>
       `)
